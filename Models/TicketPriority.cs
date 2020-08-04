@@ -7,7 +7,7 @@ namespace AphidBT.Models
 {
     public class TicketPriority
     {
-        public int Id { get; set; }
+        public int Id { get; set; } // holds the primary key
         public string Name { get; set; }
     }
 }

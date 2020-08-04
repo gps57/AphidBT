@@ -7,9 +7,10 @@ namespace AphidBT.Models
 {
     public class TicketComment
     {
-        public int Id { get; set; }
+        public int Id { get; set; } // holds the primary key
 
         #region Parents/Children
+        // Ticket is the parent of TicketComment
         public int TicketId { get; set; }
         public virtual Ticket Ticket { get; set; }
 

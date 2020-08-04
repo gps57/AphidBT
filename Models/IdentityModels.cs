@@ -14,10 +14,10 @@ namespace AphidBT.Models
 
         #region Parents/Children
         public ICollection<Project> Projects { get; set; }
-        public ICollection<TicketAttachment> Attachments { get; set; }
-        public ICollection<TicketComment> Comments { get; set; }
-        public ICollection<TicketHistory> Histories { get; set; }
-        public ICollection<TicketNotification> Notifications { get; set; }
+        public ICollection<TicketAttachment> TicketAttachments { get; set; }
+        public ICollection<TicketComment> TicketComments { get; set; }
+        public ICollection<TicketHistory> TicketHistories { get; set; }
+        public ICollection<TicketNotification> TicketNotifications { get; set; }
         #endregion
 
         #region Actual Properties
@@ -38,10 +38,10 @@ namespace AphidBT.Models
         public ApplicationUser()
         {
             Projects = new HashSet<Project>();
-            Attachments = new HashSet<TicketAttachment>();
-            Histories = new HashSet<TicketHistory>();
-            Notifications = new HashSet<TicketNotification>();
-            Comments = new HashSet<TicketComment>);
+            TicketAttachments = new HashSet<TicketAttachment>();
+            TicketHistories = new HashSet<TicketHistory>();
+            TicketNotifications = new HashSet<TicketNotification>();
+            TicketComments = new HashSet<TicketComment>();
         }
         #endregion
 
@@ -70,6 +70,17 @@ namespace AphidBT.Models
         public DbSet<TicketStatus> TicketStatuses { get; set; }
         public DbSet<TicketPriority> TicketPriorities { get; set; }
 
+        public System.Data.Entity.DbSet<AphidBT.Models.Project> Projects { get; set; }
+
+        public System.Data.Entity.DbSet<AphidBT.Models.Ticket> Tickets { get; set; }
+
+        public System.Data.Entity.DbSet<AphidBT.Models.TicketAttachment> TicketAttachments { get; set; }
+
+        public System.Data.Entity.DbSet<AphidBT.Models.TicketComment> TicketComments { get; set; }
+
+        public System.Data.Entity.DbSet<AphidBT.Models.TicketHistory> TicketHistories { get; set; }
+
+        public System.Data.Entity.DbSet<AphidBT.Models.TicketNotification> TicketNotifications { get; set; }
     }
 
 }

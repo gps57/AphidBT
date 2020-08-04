@@ -7,7 +7,7 @@ namespace AphidBT.Models
 {
     public class TicketHistory
     {
-        public int Id { get; set; }
+        public int Id { get; set; } // holds the primary key
 
         #region Parents/Children
         public int TicketId { get; set; }
