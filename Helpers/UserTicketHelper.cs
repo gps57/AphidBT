@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace AphidBT.Helper
+namespace AphidBT.Helpers
 {
-    public class UserRoleHelper
+    public class UserTicketHelper
     {
     }
 }

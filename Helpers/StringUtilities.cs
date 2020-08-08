@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace AphidBT.Helper
+namespace AphidBT.Helpers
 {
     public class StringUtilities
     {

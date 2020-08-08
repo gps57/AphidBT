@@ -128,6 +128,41 @@ namespace AphidBT.Migrations
                 userManager.AddToRole(userId, "Submitter");
             }
 
+            // Seed a couple generic users
+            if (!context.Users.Any(u => u.Email == "user1@mailinator.com"))
+            {
+                userManager.Create(new ApplicationUser()
+                {
+                    Email = "user1@mailinator.com",
+                    UserName = "user1@mailinator.com",
+                    FirstName = "User",
+                    LastName = "One"
+                }, "Abc&123!");
+
+                // grab the Id that just created by adding the above user
+                var userId = userManager.FindByEmail("user1@mailinator.com").Id;
+
+                // now that I have created a user I want to assign the person to the specific role
+                userManager.AddToRole(userId, "Submitter");
+            }
+
+            if (!context.Users.Any(u => u.Email == "user2@mailinator.com"))
+            {
+                userManager.Create(new ApplicationUser()
+                {
+                    Email = "user2@mailinator.com",
+                    UserName = "user2@mailinator.com",
+                    FirstName = "User",
+                    LastName = "Two"
+                }, "Abc&123!");
+
+                // grab the Id that just created by adding the above user
+                var userId = userManager.FindByEmail("user2@mailinator.com").Id;
+
+                // now that I have created a user I want to assign the person to the specific role
+                userManager.AddToRole(userId, "Submitter");
+            }
+
         }
     }
 }

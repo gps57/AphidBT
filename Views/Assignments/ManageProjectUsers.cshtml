@@ -1,0 +1,71 @@
+﻿@using AphidBT.Models
+@using AphidBT.Helpers
+@model IEnumerable<ApplicationUser>
+
+@{
+  ViewBag.Title = "ManageProjectUsers";
+  var projectHelper = new ProjectHelper();
+}
+
+<h2>Manage Project Users</h2>
+
+<style>
+  .btn-Wide {
+    width: 100%
+  }
+</style>
+
+@using (Html.BeginForm())
+{
+  @Html.AntiForgeryToken()
+
+  <div class="row">
+    <div class="col-6">
+      <h2>Select Users</h2>
+      @Html.ListBox("UserIds")
+    </div>
+    <div class="col-6">
+      <h2>Select Projects</h2>
+      @Html.ListBox("ProjectIds")
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-primary btn-Wide">Assign Users</button>
+    </div>
+  </div>
+
+
+
+  <table class="table">
+    <tr>
+      <th>
+        @Html.DisplayNameFor(model => model.Email)
+      </th>
+      <th>
+        @Html.DisplayName("Projects")
+      </th>
+
+      <th></th>
+    </tr>
+
+    @foreach (var person in Model)
+    {
+      <tr>
+        <td>
+          @Html.DisplayFor(modelItem => person.Email)
+        </td>
+        <td>
+          @foreach (var project in projectHelper.ListUserProjects(person.Id))
+          {
+            @project.Name <br />
+          }
+        </td>
+      </tr>
+    }
+
+  </table>
+
+
+}

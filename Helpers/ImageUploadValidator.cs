@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Web;
 
-namespace AphidBT.Helper
+namespace AphidBT.Helpers
 {
     public class ImageUploadValidator
     {

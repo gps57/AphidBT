@@ -8,16 +8,17 @@ using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace AphidBT.Models
 {
-    // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
+    // You can add profile data for the user by adding more properties to your ApplicationUser class,
+    // please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
 
         #region Parents/Children
-        public ICollection<Project> Projects { get; set; }
-        public ICollection<TicketAttachment> TicketAttachments { get; set; }
-        public ICollection<TicketComment> TicketComments { get; set; }
-        public ICollection<TicketHistory> TicketHistories { get; set; }
-        public ICollection<TicketNotification> TicketNotifications { get; set; }
+        public virtual ICollection<Project> Projects { get; set; }
+        public virtual ICollection<TicketAttachment> TicketAttachments { get; set; }
+        public virtual ICollection<TicketComment> TicketComments { get; set; }
+        public virtual ICollection<TicketHistory> TicketHistories { get; set; }
+        public virtual ICollection<TicketNotification> TicketNotifications { get; set; }
         #endregion
 
         #region Actual Properties
@@ -69,18 +70,12 @@ namespace AphidBT.Models
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<TicketStatus> TicketStatuses { get; set; }
         public DbSet<TicketPriority> TicketPriorities { get; set; }
-
-        public System.Data.Entity.DbSet<AphidBT.Models.Project> Projects { get; set; }
-
-        public System.Data.Entity.DbSet<AphidBT.Models.Ticket> Tickets { get; set; }
-
-        public System.Data.Entity.DbSet<AphidBT.Models.TicketAttachment> TicketAttachments { get; set; }
-
-        public System.Data.Entity.DbSet<AphidBT.Models.TicketComment> TicketComments { get; set; }
-
-        public System.Data.Entity.DbSet<AphidBT.Models.TicketHistory> TicketHistories { get; set; }
-
-        public System.Data.Entity.DbSet<AphidBT.Models.TicketNotification> TicketNotifications { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<TicketAttachment> TicketAttachments { get; set; }
+        public DbSet<TicketComment> TicketComments { get; set; }
+        public DbSet<TicketHistory> TicketHistories { get; set; }
+        public DbSet<TicketNotification> TicketNotifications { get; set; }
     }
 
 }

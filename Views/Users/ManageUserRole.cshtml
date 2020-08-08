@@ -1,0 +1,38 @@
+﻿@using AphidBT.Models
+
+@model ApplicationUser
+
+@{
+  ViewBag.Title = "ManageUserRole";
+}
+
+<style>
+  .btnWide {
+    width: 100%
+  }
+</style>
+
+<h2>Manage User Role</h2>
+
+<div class="row">
+  <div class="col-3 text-center h2">
+    Managing Role for: @Model.FullName
+  </div>
+</div>
+
+@using (Html.BeginForm())
+{
+  @Html.AntiForgeryToken()
+  <div class="row">
+    <div class="col-3">
+      @Html.DropDownList("RoleName", "-- No role --")
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-3">
+      <button type="submit" class="btn btn-danger btnWide">Manage Role</button>
+    </div>
+  </div>
+
+}

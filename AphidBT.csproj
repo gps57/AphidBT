@@ -168,6 +168,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AssignmentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
@@ -179,20 +180,23 @@
     <Compile Include="Controllers\TicketsController.cs" />
     <Compile Include="Controllers\TicketStatusController.cs" />
     <Compile Include="Controllers\TicketTypesController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helper\ImageUploadValidator.cs" />
-    <Compile Include="Helper\StringUtilities.cs" />
-    <Compile Include="Helper\UserHelper.cs" />
-    <Compile Include="Helper\UserRoleHelper.cs" />
-    <Compile Include="Helper\UserTicketHelper.cs" />
+    <Compile Include="Helpers\ImageUploadValidator.cs" />
+    <Compile Include="Helpers\ProjectHelper.cs" />
+    <Compile Include="Helpers\StringUtilities.cs" />
+    <Compile Include="Helpers\UserHelper.cs" />
+    <Compile Include="Helpers\UserRolesHelper.cs" />
+    <Compile Include="Helpers\UserTicketHelper.cs" />
     <Compile Include="Migrations\202008032156038_migration-03aug2020.cs" />
     <Compile Include="Migrations\202008032156038_migration-03aug2020.Designer.cs">
       <DependentUpon>202008032156038_migration-03aug2020.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\EmailModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Project.cs" />
@@ -218,6 +222,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Private.config" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -308,6 +313,13 @@
     <Content Include="Views\TicketStatus\Details.cshtml" />
     <Content Include="Views\TicketStatus\Edit.cshtml" />
     <Content Include="Views\TicketStatus\Index.cshtml" />
+    <Content Include="Views\Assignments\ManageRoles.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Users\ManageUserRole.cshtml" />
+    <Content Include="Views\Account\ResendEmailConfirmation.cshtml" />
+    <Content Include="Views\Account\ConfirmationSent.cshtml" />
+    <Content Include="Views\Assignments\ManageProjects.cshtml" />
+    <Content Include="Views\Assignments\ManageProjectUsers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
