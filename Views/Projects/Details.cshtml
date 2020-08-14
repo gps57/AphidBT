@@ -1,45 +1,99 @@
 ﻿@model AphidBT.Models.Project
 
 @{
-    ViewBag.Title = "Details";
+  ViewBag.Title = "Details";
 }
 
 <h2>Details</h2>
 
 <div>
-    <h4>Project</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+  <h4>Project</h4>
+  <hr />
+  <dl class="dl-horizontal">
+    <dt>
+      @Html.DisplayNameFor(model => model.Name)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+    <dd>
+      @Html.DisplayFor(model => model.Name)
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
+    <dt>
+      @Html.DisplayNameFor(model => model.Created)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Created)
-        </dd>
+    <dd>
+      @Html.DisplayFor(model => model.Created)
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.IsArchived)
-        </dt>
+    <dt>
+      @Html.DisplayNameFor(model => model.IsArchived)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.IsArchived)
-        </dd>
+    <dd>
+      @Html.DisplayFor(model => model.IsArchived)
+    </dd>
 
-    </dl>
+  </dl>
 </div>
+
+<hr />
+@if (User.IsInRole("Submitter"))
+{
+  using (Html.BeginForm("Create", "Tickets", FormMethod.Post))
+  {
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+      <h4>Ticket</h4>
+      <hr />
+      @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+      @Html.Hidden("Projectid", Model.Id)
+
+      <div class="form-group">
+        @Html.Label("Ticket Priority", "TicketPriorityId", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.DropDownList("TicketPriorityId", null, htmlAttributes: new { @class = "form-control" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.Label("Ticket Type", "TicketTypeId", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.DropDownList("TicketTypeId", null, htmlAttributes: new { @class = "form-control" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.Label("Issue Title", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.Editor("Title", new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.Label("Issue Description", htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.TextArea("Description", new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+          <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+      </div>
+    </div>
+  }
+
+}
+
+<hr />
+
 <p>
-    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-    {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <span> | </span>
-    }
-    @Html.ActionLink("Back to List", "Index")
+  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+  {
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) <span> | </span>
+  }
+  @Html.ActionLink("Back to List", "Index")
 </p>

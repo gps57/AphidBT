@@ -11,7 +11,13 @@
 
 <style>
   .btn-Wide {
-    width: 100%
+    width: 100%;
+    margin-bottom: 3px;
+  }
+
+  .ck_Margin{
+    margin-top: 3em;
+    margin-bottom: 3em;
   }
 </style>
 
@@ -31,13 +37,16 @@
   </div>
 
   <div class="row">
+    <div class="ck_Margin">
+      @Html.CheckBox("Remove", false) Remove users from selected projects?
+    </div>
     <div class="col-md-12">
       <button type="submit" class="btn btn-primary btn-Wide">Assign Users</button>
     </div>
   </div>
 
 
-
+  <br />
   <table class="table">
     <tr>
       <th>

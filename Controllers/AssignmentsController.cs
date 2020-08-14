@@ -82,22 +82,29 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ManageProjectUsers(List<string>userIds, List<int>projectIds)
+        public ActionResult ManageProjectUsers(List<string> userIds, List<int> projectIds, bool remove)
         {
             // if no users, or no projects, send them back
-            if(userIds == null || projectIds == null)
+            if (userIds == null || projectIds == null)
             {
                 // nothing to do
                 return RedirectToAction("ManageProjectUsers");
             }
 
-            // iterate over each user and add them to each project
-            foreach(var userId in userIds)
+            // iterate over each user and add/remove them to/from each project
+            foreach (var userId in userIds)
             {
-                // Assign this person to each of the projects
-                foreach(var projectId in projectIds)
+                // Assign/remove this person to each of the projects
+                foreach (var projectId in projectIds)
                 {
-                    projectHelper.AddUserToProject(userId, projectId);
+                    if (remove)
+                    {
+                        projectHelper.RemoveUserFromProject(userId, projectId);
+                    }
+                    else
+                    {
+                        projectHelper.AddUserToProject(userId, projectId);
+                    }
                 }
             }
 
@@ -105,48 +112,6 @@ namespace AphidBT.Controllers
         }
 
         // END Jason's versions
-
-
-        // GET: Assignments
-        [Authorize(Roles = "Admin,  Project Manager")]
-        public ActionResult ManageProjects()
-        {
-            {
-                // Use my ViewBag to hold a multi select list of Users in the system
-                // new MultiSelectList(the data itself, "Id", "Email")
-                ViewBag.UserIds = new MultiSelectList(db.Users, "Id", "Email");
-
-                // use my ViewBag to hold a select list of Roles
-                ViewBag.ProjectName = new SelectList(db.Projects, "Name", "Name");
-
-                return View(db.Users.ToList());
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult ManageProjects(List<string> userIds, string projectName)
-        {
-            if (userIds == null)
-            {
-                // there's nothing to do
-                return RedirectToAction("ProjectsIndex");
-            }
-
-            var projectId = db.Projects.Where(r => r.Name == projectName).FirstOrDefault().Id;
-
-            // If people were selected, spin through them and strip them of all their current roles.
-            foreach (var userId in userIds)
-            {
-                // if a project was chosen, add each person to that project.
-                if (!string.IsNullOrEmpty(projectName))
-                {
-                    projectHelper.AddUserToProject(userId, projectId);
-                }
-            }
-
-            return RedirectToAction("ManageProjects");
-        }
         #endregion
 
     }

@@ -15,6 +15,7 @@ namespace AphidBT.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public ManageController()
         {
@@ -32,9 +33,9 @@ namespace AphidBT.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -66,6 +67,7 @@ namespace AphidBT.Controllers
             var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
             {
+                HasProfile = HasProfile(),
                 HasPassword = HasPassword(),
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
@@ -276,6 +278,42 @@ namespace AphidBT.Controllers
             return View(model);
         }
 
+
+        // GET: /Manage/ChangeProfile
+        public ActionResult ChangeProfile()
+        {
+            return View();
+        }
+
+        //
+        // POST: /Manage/ChangePassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> ChangeProfile(ChangeProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // get the user who is logged in and making this change
+            var loggedInUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+            // use the logged in user's Id to find the same user's data record in the database
+            var userRecord = db.Users.Find(loggedInUser.Id);
+
+            // update the database record with the new data the user entered
+            userRecord.FirstName = model.FirstName;
+            userRecord.LastName = model.LastName;
+            userRecord.Email = model.Email;
+            userRecord.UserName = model.Email;
+
+            db.SaveChanges();
+            return View(model);
+
+        }
+
         //
         // GET: /Manage/ManageLogins
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
@@ -333,7 +371,7 @@ namespace AphidBT.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -351,6 +389,17 @@ namespace AphidBT.Controllers
             {
                 ModelState.AddModelError("", error);
             }
+        }
+
+        private bool HasProfile()
+        {
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            if (user != null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private bool HasPassword()
@@ -384,6 +433,6 @@ namespace AphidBT.Controllers
             Error
         }
 
-#endregion
+        #endregion
     }
 }

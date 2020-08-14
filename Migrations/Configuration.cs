@@ -163,6 +163,56 @@ namespace AphidBT.Migrations
                 userManager.AddToRole(userId, "Submitter");
             }
 
+
+            context.SaveChanges();
+
+            //seeding some ticket stuff
+            #region TicketType Seed
+            context.TicketTypes.AddOrUpdate(
+                tt => tt.Name,
+                new TicketType() { Name = "Software" },
+                new TicketType() { Name = "Hardware" },
+                new TicketType() { Name = "UI" },
+                new TicketType() { Name = "Defect" },
+                new TicketType() { Name = "Feature Request" },
+                new TicketType() { Name = "Other" }
+                );
+            #endregion
+
+            #region TicketPriority Seed
+            context.TicketPriorities.AddOrUpdate(
+                pp => pp.Name,
+                new TicketPriority() { Name = "Low" },
+                new TicketPriority() { Name = "Medium" },
+                new TicketPriority() { Name = "High" },
+                new TicketPriority() { Name = "On Hold" }
+                );
+            #endregion
+
+            #region TicketStatus Seed
+            context.TicketStatuses.AddOrUpdate(
+                ts => ts.Name,
+                new TicketStatus() { Name = "Open" },
+                new TicketStatus() { Name = "Assigned" },
+                new TicketStatus() { Name = "Resolved" },
+                new TicketStatus() { Name = "Reopened" },
+                new TicketStatus() { Name = "Archived" }
+                );
+            #endregion
+            #region Project Seed
+            context.Projects.AddOrUpdate(
+                p => p.Name,
+                new Project() { Name = "Seed 1", Created = DateTime.Now.AddDays(-60), IsArchived = true },
+                new Project() { Name = "Seed 2", Created = DateTime.Now.AddDays(-45) },
+                new Project() { Name = "Seed 3", Created = DateTime.Now.AddDays(-30) },
+                new Project() { Name = "Seed 4", Created = DateTime.Now.AddDays(-15) },
+                new Project() { Name = "Seed 5", Created = DateTime.Now.AddDays(-7) }
+                );
+            #endregion
+
+            context.SaveChanges();
+
+
         }
     }
 }
