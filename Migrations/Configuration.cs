@@ -199,6 +199,7 @@ namespace AphidBT.Migrations
                 new TicketStatus() { Name = "Archived" }
                 );
             #endregion
+
             #region Project Seed
             context.Projects.AddOrUpdate(
                 p => p.Name,
@@ -211,7 +212,6 @@ namespace AphidBT.Migrations
             #endregion
 
             context.SaveChanges();
-
 
         }
     }

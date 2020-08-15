@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
+using AphidBT.Helpers;
 using AphidBT.Models;
+using Microsoft.AspNet.Identity;
 
 namespace AphidBT.Controllers
 {
@@ -49,18 +53,41 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,TicketId,UserId,FilePath,Description,Created")] TicketAttachment ticketAttachment)
+        public ActionResult Create([Bind(Include = "TicketId,FileName")] TicketAttachment ticketAttachment, string attachmentDescription, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
+                ticketAttachment.Description = attachmentDescription;
+                ticketAttachment.Created = DateTime.Now;
+                ticketAttachment.UserId = User.Identity.GetUserId();
+
+                // check that there is not an incoming file
+                if (file == null)
+                {
+                    TempData["Error"] = "You must supply a file.";
+                    return RedirectToAction("Dashboard", "Tickets", new { id = ticketAttachment.TicketId });
+                }
+                
+                if(FileUploadValidator.IsWebFriendlyImage(file) || FileUploadValidator.IsWebFriendlyFile(file))
+                {
+                    var fileName = FileStamp.MakeUnique(file.FileName);
+
+                    var serverFolder = WebConfigurationManager.AppSettings["DefaultAttachmentFolder"];
+                    file.SaveAs(Path.Combine(Server.MapPath("~" + serverFolder), fileName));
+                    ticketAttachment.FilePath = $"{serverFolder}/{fileName}";
+                }
+
                 db.TicketAttachments.Add(ticketAttachment);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Dashboard", "Tickets", new { id = ticketAttachment.TicketId });
             }
 
-            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketAttachment.TicketId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketAttachment.UserId);
-            return View(ticketAttachment);
+            TempData["Error"] = "The model was invalid for some reason!";
+            return RedirectToAction("Dashboard", "Tickets", new { id = ticketAttachment.TicketId });
+
+            //ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId", ticketAttachment.TicketId);
+            //ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketAttachment.UserId);
+            //return View(ticketAttachment);
         }
 
         // GET: TicketAttachments/Edit/5

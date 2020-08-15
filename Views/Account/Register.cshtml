@@ -59,7 +59,7 @@
       <div class="login-box card">
         <div class="card-body">
 
-          @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal form-material", role = "form", id = "loginform" }))
+          @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal form-material", role = "form", id = "loginform", enctype="multipart/form-data" }))
           {
             @Html.AntiForgeryToken()
             <h3 class="box-title m-b-20">Sign Up</h3>
@@ -78,6 +78,14 @@
             <div class="form-group">
               <div class="col-xs-12">
                 <input class="form-control" type="text" placeholder="Last Name" name="LastName" />
+              </div>
+            </div>
+
+            <!-- Optional Avatar field -->
+            <div class="form-group">
+              @Html.Label("Personal Avatar", new { @class = "col-10 control-label" })
+              <div class="col-xs-10">
+                @Html.TextBoxFor(m => m.Avatar, new { type="file"})
               </div>
             </div>
 
