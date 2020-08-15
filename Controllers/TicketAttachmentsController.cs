@@ -55,30 +55,32 @@ namespace AphidBT.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "TicketId,FileName")] TicketAttachment ticketAttachment, string attachmentDescription, HttpPostedFileBase file)
         {
+            // check that there is not an incoming file
+            if (file == null)
+            {
+                TempData["Error"] = "You must supply a file.";
+                return RedirectToAction("Dashboard", "Tickets", new { id = ticketAttachment.TicketId });
+            }
+
             if (ModelState.IsValid)
             {
-                ticketAttachment.Description = attachmentDescription;
-                ticketAttachment.Created = DateTime.Now;
-                ticketAttachment.UserId = User.Identity.GetUserId();
+                if (FileUploadValidator.IsWebFriendlyImage(file) || FileUploadValidator.IsWebFriendlyFile(file))
+                {
+                    ticketAttachment.Description = attachmentDescription;
+                    ticketAttachment.Created = DateTime.Now;
+                    ticketAttachment.UserId = User.Identity.GetUserId();
 
-                // check that there is not an incoming file
-                if (file == null)
-                {
-                    TempData["Error"] = "You must supply a file.";
-                    return RedirectToAction("Dashboard", "Tickets", new { id = ticketAttachment.TicketId });
-                }
-                
-                if(FileUploadValidator.IsWebFriendlyImage(file) || FileUploadValidator.IsWebFriendlyFile(file))
-                {
                     var fileName = FileStamp.MakeUnique(file.FileName);
 
                     var serverFolder = WebConfigurationManager.AppSettings["DefaultAttachmentFolder"];
                     file.SaveAs(Path.Combine(Server.MapPath("~" + serverFolder), fileName));
                     ticketAttachment.FilePath = $"{serverFolder}/{fileName}";
+
+                    db.TicketAttachments.Add(ticketAttachment);
+                    db.SaveChanges();
+                    
                 }
 
-                db.TicketAttachments.Add(ticketAttachment);
-                db.SaveChanges();
                 return RedirectToAction("Dashboard", "Tickets", new { id = ticketAttachment.TicketId });
             }
 
