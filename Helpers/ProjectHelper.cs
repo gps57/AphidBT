@@ -4,22 +4,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity;
+using Microsoft.Ajax.Utilities;
 
 namespace AphidBT.Helpers
 {
     public class ProjectHelper
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UserRolesHelper roleHelper = new UserRolesHelper();
 
-        public int ProjectCount()
+        public int UserProjectCount()
         {
-            return db.Projects.ToList().Count;
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            var count = ListUserProjects(userId).Count;
+
+            if (roleHelper.IsUserInRole(userId, "Admin"))
+            {
+                count = db.Projects.Count();
+            }
+            else
+            {
+                count = ListUserProjects(userId).Count;
+            }
+
+            return count;
         }
 
         // Add one or more users to a project
         public void AddUserToProject(string userId, int projectId)
         {
-            if(!IsUserOnProject(userId, projectId))
+            if (!IsUserOnProject(userId, projectId))
             {
                 Project project = db.Projects.Find(projectId);
                 var user = db.Users.Find(userId);
@@ -51,7 +66,7 @@ namespace AphidBT.Helpers
             //return resultList;
 
             return db.Projects.Find(projectId).Users;
-            
+
         }
 
         // List users not on a project
@@ -59,9 +74,9 @@ namespace AphidBT.Helpers
         {
             var resultList = new List<ApplicationUser>();
 
-            foreach(var user in db.Users.ToList())
+            foreach (var user in db.Users.ToList())
             {
-                if(!IsUserOnProject(user.Id, projectId))
+                if (!IsUserOnProject(user.Id, projectId))
                 {
                     resultList.Add(user);
                 }
@@ -88,7 +103,7 @@ namespace AphidBT.Helpers
             var resultList = new List<ApplicationUser>();
             var roleHelper = new UserRolesHelper();
 
-            foreach(var user in userList)
+            foreach (var user in userList)
             {
                 if (roleHelper.IsUserInRole(user.Id, roleName))
                 {

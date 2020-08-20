@@ -90,19 +90,25 @@ namespace AphidBT.Controllers
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.Email = model.Email;
+            user.UserName = model.Email;
 
-            if(avatar == null)
+            if(avatar != null)
             {
-                user.AvatarPath = WebConfigurationManager.AppSettings["DefaultAvatarPath"];
-            }
-            else
-            {
+                // TODO: When the avatar is changed, we'll have to delete the old file, or they'll just
+                // pile up on the server.
+                var serverFolder = WebConfigurationManager.AppSettings["DefaultServerFolder"];
+                var oldAvatarFileName = Path.GetFileName(user.AvatarPath);
+
+                if(System.IO.File.Exists(Path.Combine(serverFolder, oldAvatarFileName)))
+                {
+                    System.IO.File.Delete(Path.Combine(serverFolder, oldAvatarFileName));
+                }
+
                 if (FileUploadValidator.IsWebFriendlyImage(avatar))
                 {
-                    var fileName = FileStamp.MakeUnique(avatar.FileName);
+                    var fileName = FileStamp.MakeUnique(avatar.FileName);                    
 
-                    var serverFolder = WebConfigurationManager.AppSettings["DefaultServerFolder"];
-                    avatar.SaveAs(Path.Combine(Server.MapPath("~" + serverFolder), fileName));
+                    avatar.SaveAs(Path.Combine(Server.MapPath(serverFolder), fileName));
                     user.AvatarPath = $"{serverFolder}/{fileName}";
                 }
             }
@@ -132,11 +138,10 @@ namespace AphidBT.Controllers
                 {
                     projectHelper.AddUserToProject(user.Id, Id);
                 }
-            }            
+            }
+            
             return RedirectToAction("Index", "Home");
         }
-
-        //public ActionResult ManageUserRole(string id)
 
     }
 }

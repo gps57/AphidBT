@@ -2,97 +2,84 @@
 @model AphidBT.ViewModels.TicketsListVM
 
 @{
-  ViewBag.Title = "Index";
+    ViewBag.Title = "Index";
+    var ticketHelper = new AphidBT.Helpers.TicketHelper();
 }
 
+<div class="row">
+  <div class="col-12">
+    <div class="row">
+      <!-- Column -->
+      <div class="col-md-6 col-lg-3 col-xlg-3">
+        <div class="card card-inverse card-danger">
+          <div class="box text-center">
+            <h1 class="font-light text-white">@{var count = ticketHelper.TicketCount("Open") + ticketHelper.TicketCount("Reopened");}@count</h1>
+            <h6 class="text-white">Pending Tickets</h6>
+          </div>
+        </div>
+      </div>
+      <!-- Column -->
+      <div class="col-md-6 col-lg-3 col-xlg-3">
+        <div class="card card-success card-inverse">
+          <div class="box text-center">
+            <h1 class="font-light text-white">@ticketHelper.TicketCount("Assigned")</h1>
+            <h6 class="text-white">Assigned Tickets</h6>
+          </div>
+        </div>
+      </div>
+      <!-- Column -->
+      <div class="col-md-6 col-lg-3 col-xlg-3">
+        <div class="card card-inverse card-info">
+          <div class="box bg-info text-center">
+            <h1 class="font-light text-white">@ticketHelper.TicketCount("Resolved")</h1>
+            <h6 class="text-white">Resolved Tickets</h6>
+          </div>
+        </div>
+      </div>
+      <!-- Column -->
+      <div class="col-md-6 col-lg-3 col-xlg-3">
+        <div class="card card-inverse card-dark">
+          <div class="box text-center">
+            <h1 class="font-light text-white">@ticketHelper.TicketCount()</h1>
+            <h6 class="text-white">Total Tickets</h6>
+          </div>
+        </div>
+      </div>
+      <!-- Column -->
+    </div>
+
+  </div>
+  </div>
 <div class="row">
   <div class="col-12">
     <div class="card">
       <div class="card-body">
         <h4 class="card-title">Support Tickets List</h4>
         <h6 class="sub-title">List of tickets opened by Submitters</h6>
-        <!-- Summary boxes -->
-        <div class="row m-t-40">
-          <!-- Column -->
-          <div class="col-md-6 col-lg-3 col-xlg-3">
-            <div class="card card-inverse card-danger">
-              <div class="box text-center">
-                <h1 class="font-light text-white">1100</h1>
-                <h6 class="text-white">Pending</h6>
-              </div>
-            </div>
-          </div>
-          <!-- Column -->
-          <div class="col-md-6 col-lg-3 col-xlg-3">
-            <div class="card card-success card-inverse">
-              <div class="box text-center">
-                <h1 class="font-light text-white">1,738</h1>
-                <h6 class="text-white">Assigned</h6>
-              </div>
-            </div>
-          </div>
-          <!-- Column -->
-          <div class="col-md-6 col-lg-3 col-xlg-3">
-            <div class="card card-inverse card-info">
-              <div class="box bg-info text-center">
-                <h1 class="font-light text-white">2,064</h1>
-                <h6 class="text-white">Total</h6>
-              </div>
-            </div>
-          </div>
-          <!-- Column -->
-          <div class="col-md-6 col-lg-3 col-xlg-3">
-            <div class="card card-inverse card-dark">
-              <div class="box text-center">
-                <h1 class="font-light text-white">964</h1>
-                <h6 class="text-white">Resolved</h6>
-              </div>
-            </div>
-          </div>
-          <!-- Column -->
-        </div>
         <!-- List of Tickets -->
         <div class="table-responsive">
           @if (User.IsInRole("Admin"))
           {
-            <table id="myTable" class="table table-bordered table-striped">
+            <table id="allTable" class="table m-t-30 table-hover no-wrap contact-list">
               <thead>
                 <tr>
                   <th>
-                    Developer
+                    <small><strong>Issue Title</strong></small>
                   </th>
                   <th>
-                    Project
+                    <small><strong>Project</strong></small>
                   </th>
                   <th>
-                    Submitter
+                    <small><strong>Submitter</strong></small>
                   </th>
                   <th>
-                    Ticket Priority
+                    <small><strong>Priority</strong></small>
                   </th>
                   <th>
-                    Ticket Status
+                    <small><strong>Status</strong></small>
                   </th>
                   <th>
-                    Ticket Type
-                  </th>
-                  <th>
-                    Issue Title
-                  </th>
-                  <th>
-                    Issue Description
-                  </th>
-                  <th>
-                    Created Date
-                  </th>
-                  <th>
-                    Updated Date
-                  </th>
-                  <th>
-                    Resolved?
-                  </th>
-                  <th>
-                    IsArchived?
+                    <small><strong>Created Date</strong></small>
                   </th>
                   <th></th>
                 </tr>
@@ -100,93 +87,56 @@
               <tbody>
                 @foreach (var item in Model.AllTickets)
                 {
-                  <tr>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Developer.FirstName)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Project.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Submitter.FirstName)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.TicketType.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Created)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Updated)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.IsResolved)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.IsArchived)
-                    </td>
-                    <td>
-                      @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                      @Html.ActionLink("Details", "Dashboard", new { id = item.Id })
-                    </td>
-                  </tr>
+                <tr>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                  </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.Project.Name)
+                  </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.Submitter.FirstName)
+                  </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                  </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                  </td>
+                  <td>
+                    @item.Created.ToString("dd MMM yyyy")
+                  </td>
+                  <td>
+                    @Html.ActionLink("Details", "Dashboard", new { id = item.Id })
+                  </td>
+                </tr>
                 }
               </tbody>
             </table>
           }
           else
           {
-            @*<table id="myTable" class="display table table-striped">*@
               <table id="myTable" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="5">
               <thead>
                 <tr>
                   <th>
-                    Developer
+                    <small><strong>Issue Title</strong></small>
                   </th>
                   <th>
-                    Project
+                    <small><strong>Project</strong></small>
                   </th>
                   <th>
-                    Submitter
+                    <small><strong>Submitter</strong></small>
                   </th>
                   <th>
-                    Ticket Priority
+                    <small><strong>Priority</strong></small>                    
                   </th>
                   <th>
-                    Ticket Status
+                    <small><strong>Status</strong></small>
+                    
                   </th>
                   <th>
-                    Ticket Type
-                  </th>
-                  <th>
-                    Issue Title
-                  </th>
-                  <th>
-                    Issue Description
-                  </th>
-                  <th>
-                    Created Date
-                  </th>
-                  <th>
-                    Updated Date
-                  </th>
-                  <th>
-                    Resolved?
-                  </th>
-                  <th>
-                    IsArchived?
+                    <small><strong>Created Date</strong></small>
                   </th>
                   <th></th>
                 </tr>
@@ -194,48 +144,28 @@
               <tbody>
                 @foreach (var item in Model.MyTickets)
                 {
-                  <tr>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Developer.FirstName)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Project.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Submitter.FirstName)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.TicketType.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Created)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Updated)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.IsResolved)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.IsArchived)
-                    </td>
-                    <td>
-                      @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                      @Html.ActionLink("Details", "Dashboard", new { id = item.Id })
-                    </td>
-                  </tr>
+                <tr>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                  </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.Project.Name)
+                  </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.Submitter.FirstName)
+                  </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                  </td>
+                  <td>
+                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                  </td>
+                  <td>
+                    @item.Created.ToString("dd MMM yyyy")
+                  </td>
+                  <td>@Html.ActionLink("Details", "Dashboard", new { id = item.Id })
+                  </td>
+                </tr>
                 }
               </tbody>
 
@@ -260,6 +190,7 @@
   <script>
     $(document).ready(function () {
 
+      $('#allTable').DataTable();
       $('#myTable').DataTable();
     })
   </script>

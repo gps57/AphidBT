@@ -34,7 +34,7 @@ namespace AphidBT.Controllers
             return View(ticketListVM);
         }
 
-        // GET: Tickets/Details/5
+        // GET: Tickets/Dashboard/5
         public ActionResult Dashboard(int? id)
         {
             if (id == null)

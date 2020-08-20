@@ -6,17 +6,17 @@
 }
 
 
-<div class="container">
-  <div class="row">
-    @* Project info *@
-    <div class="col-10">
-      <p>Project Data</p>
-      <br />
-      <h2>Project Name: @Model.Project.Name</h2>
-      <h2>Project Created: @Model.Project.Created</h2>
-
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card card-outline-info">
+      <div class="card-header">
+        <h4 class="m-b-0 text-white">@Model.Project.Name - Issue Ticket: @Model.Title  </h4>
+      </div>
     </div>
   </div>
+</div>
+
+<div class="container">
 
   <div class="row">
     @* Ticket info *@
@@ -27,6 +27,90 @@
       <h2>Ticket Priority: @Model.TicketPriority.Name</h2>
       <h2>Ticket Status: @Model.TicketStatus.Name</h2>
       <h2>Ticket Type: @Model.TicketType.Name</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Comments column -->
+    <div class="col-12 col-lg-6">
+      <div class="card">
+        <div class="card-body bg-info">
+          <h4 class="text-white card-title">Ticket Comments</h4>
+          <h6 class="card-subtitle text-white m-0 op-5">Comments on @Model.Project.Name-@Model.Title   </h6>
+        </div>
+        <div class="card-body">
+          <div id="comment-scroll">
+            <div class="comment-widgets m-b-20">
+              <!-- foreach loop for comments would start here -->
+              <!-- Comment Row -->
+              <div class="d-flex flex-row comment-row">
+                <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
+                <div class="comment-text w-100">
+                  <h5>James Anderson</h5>
+                  <div class="comment-footer">
+                    <span class="date">April 14, 2016</span>
+                    <span class="label label-info">Pending</span> <span class="action-icons">
+                      <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
+                      <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
+                      <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
+                    </span>
+                  </div>
+                  <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry.</p>
+                </div>
+              </div>
+              <!-- This is the end of one comment, end of foreach loop -->
+              <!-- Comment Row -->
+              <div class="d-flex flex-row comment-row ">
+                <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
+                <div class="comment-text active w-100">
+                  <h5>Michael Jorden</h5>
+                  <div class="comment-footer">
+                    <span class="date">April 14, 2016</span>
+                    <span class="label label-success">Approved</span> <span class="action-icons active">
+                      <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
+                      <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle text-success"></i></a>
+                      <a href="javascript:void(0)"><i class="mdi mdi-heart text-danger"></i></a>
+                    </span>
+                  </div>
+                  <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry..</p>
+                </div>
+              </div>
+              <!-- Comment Row -->
+              <div class="d-flex flex-row comment-row">
+                <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
+                <div class="comment-text w-100">
+                  <h5>Johnathan Doeting</h5>
+                  <div class="comment-footer">
+                    <span class="date">April 14, 2016</span>
+                    <span class="label label-danger">Rejected</span> <span class="action-icons">
+                      <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
+                      <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
+                      <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
+                    </span>
+                  </div>
+                  <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry.</p>
+                </div>
+              </div>
+              <!-- Comment Row -->
+              <div class="d-flex flex-row comment-row">
+                <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
+                <div class="comment-text w-100">
+                  <h5>James Anderson</h5>
+                  <div class="comment-footer">
+                    <span class="date">April 14, 2016</span>
+                    <span class="label label-info">Pending</span> <span class="action-icons">
+                      <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
+                      <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
+                      <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
+                    </span>
+                  </div>
+                  <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry..</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -158,22 +242,22 @@
         </thead>
 
         <tbody>
-        @foreach (var attachment in Model.TicketAttachments.ToList())
-        {
-          <tr>
-            <td>
-              @* This will hold the icon *@
-              <img src="@IconHelper.GetIcon(Path.GetExtension(attachment.FilePath))" class="img-responsive" style="height: 25px; width:25px;"/>
-            </td>
-            <td>
-              @Html.DisplayFor(modelItem => attachment.FileName)
-            </td>
-            <td>
-              <a target="_blank" href="@attachment.FilePath">@attachment.FilePath</a>
-              
-            </td>
-          </tr>
-        }
+          @foreach (var attachment in Model.TicketAttachments.ToList())
+          {
+            <tr>
+              <td>
+                @* This will hold the icon *@
+                <img src="@IconHelper.GetIcon(Path.GetExtension(attachment.FilePath))" class="img-responsive" style="height: 25px; width:25px;" />
+              </td>
+              <td>
+                @Html.DisplayFor(modelItem => attachment.FileName)
+              </td>
+              <td>
+                <a target="_blank" href="@attachment.FilePath">@attachment.FilePath</a>
+
+              </td>
+            </tr>
+          }
         </tbody>
 
       </table>
@@ -183,3 +267,17 @@
   </div>
 
 </div>
+
+@section Scripts {
+  <script src="~/Scripts/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
+
+      $('#myTable').DataTable();
+    })
+
+    $('#comments-scroll').slimScroll({
+      height: '400px'
+    });
+  </script>
+  }

@@ -89,7 +89,14 @@ namespace AphidBT.Helpers
             return db.Tickets.ToList().Count;
         }
 
-        public int ResolvedTicketsCount()
+        public int TicketCount(string ticketStatus)
+        {
+            var count = db.Tickets.Where(t => t.TicketStatus.Name == ticketStatus).ToList().Count;
+
+            return count;
+        }
+
+        public int PendingTicketsCount()
         {
             int rCount = 0;
 
@@ -101,6 +108,20 @@ namespace AphidBT.Helpers
                 }
             }
             return rCount;
+        }
+
+        public int ResolvedTicketsCount()
+        {
+            int count = 0;
+
+            foreach (var t in db.Tickets.ToList())
+            {
+                if (t.IsResolved)
+                {
+                    count++;
+                }
+            }
+            return count;
         }
 
         public int ArchivedTicketsCount()

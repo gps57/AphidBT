@@ -39,7 +39,6 @@
             @Html.DisplayFor(modelItem => user.Email)
           </td>
           <td class="align-middle">
-            @*@Html.ActionLink("Manage", "ManageAUser", "Users", new { userId = user.Id }, null)*@
             @Html.ActionLink("Manage", "Manage", "Users", new { userId = user.Id }, null)
           </td>
         </tr>
