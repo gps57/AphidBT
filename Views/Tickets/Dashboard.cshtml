@@ -1,8 +1,10 @@
-﻿@model AphidBT.Models.Ticket
+﻿@using AphidBT.Helpers
+@model AphidBT.Models.Ticket
 
 @{
-  ViewBag.Title = "Dashboard";
+  ViewBag.Title = "Ticket Dashboard";
 }
+
 
 <div class="container">
   <div class="row">
@@ -31,12 +33,79 @@
   <div class="row">
     @* Ticket Comments *@
     <div class="col-10">
+      <hr />
       <h4>Ticket Comments</h4>
+      @using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+      {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+          <h4>Create Ticket Comment</h4>
+
+          @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+          @Html.Hidden("TicketId", Model.Id)
+
+          <div class="form-group">
+            @Html.Label("Comment", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+              @Html.TextArea("Comment", new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+              <input type="submit" value="Create Comment" class="btn btn-primary" />
+            </div>
+          </div>
+        </div>
+      }
+      @* Display existing comments *@
+      <hr />
+      <h4>List of Comments</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>
+              @Html.DisplayName("Name")
+            </th>
+            <th>
+              @Html.DisplayName("Comment")
+            </th>
+            <th>
+              @Html.DisplayName("Create Date")
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @foreach (var comment in Model.TicketComments.ToList())
+          {
+            <tr>
+              <td>
+                @Html.DisplayFor(modelItem => comment.User.FullName)
+              </td>
+              <td>
+                @Html.DisplayFor(modelItem => comment.Comment)
+              </td>
+              <td>
+                @Html.DisplayFor(modelItem => comment.Created)
+              </td>
+            </tr>
+          }
+        </tbody>
+
+      </table>
+
+
     </div>
   </div>
+
+
   <div class="row">
     @* Ticket Attachments (add and show) *@
     <div class="col-10">
+      <hr />
+      <h4>Create A Ticket Attachment</h4>
       @* Adding a new attachment *@
       @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" }))
       {
@@ -73,11 +142,11 @@
 
       @* Display existing attachments *@
       <hr />
+      <h4>List of Attachments</h4>
       <table class="table">
         <thead>
           <tr>
             <th>
-              Icon
             </th>
             <th>
               @Html.DisplayName("Name")
@@ -94,6 +163,7 @@
           <tr>
             <td>
               @* This will hold the icon *@
+              <img src="@IconHelper.GetIcon(Path.GetExtension(attachment.FilePath))" class="img-responsive" style="height: 25px; width:25px;"/>
             </td>
             <td>
               @Html.DisplayFor(modelItem => attachment.FileName)

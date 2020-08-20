@@ -4,37 +4,57 @@
 
 @{
   ViewBag.Title = "Index";
+  var roleHelper = new AphidBT.Helpers.UserRolesHelper();
 }
 
-<h2>Index</h2>
+<div class="card card-outline-info">
+  <div class="card-header">
+    <h4 class="m-b-0 text-white">List of All Users </h4>
+  </div>
+  <div class="card-body px-4">
+  <table id="usersTable" class="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>
+          @Html.DisplayNameFor(model => model.FullName)
+        </th>
+        <th>
+          @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var user in Model)
+      {
+        <tr>
+          <td class="align-middle">
+            <img src="@user.AvatarPath" alt="user" class="img-circle img-fluid mb-2" style="width:40px;">
+          </td>
+          <td class="align-middle">
+            @Html.DisplayFor(modelItem => user.FullName)
+          </td>
+          <td class="align-middle">
+            @Html.DisplayFor(modelItem => user.Email)
+          </td>
+          <td class="align-middle">
+            @Html.ActionLink("Manage", "ManageAUser", "Users", new { userId = user.Id }, null)
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  </div>
+</div>
 
+@section Scripts {
+  <script src="~/Scripts/jquery.dataTables.min.js"></script>
+  <script>
+    $(document).ready(function () {
 
-<table class="table">
-  <tr>
-    <th>
-      @Html.DisplayNameFor(model => model.FullName)
-    </th>
-    <th>
-      @Html.DisplayNameFor(model => model.Email)
-    </th>
-    <th></th>
-  </tr>
-
-  @foreach (var user in Model)
-  {
-    <tr>
-      <td>
-        @Html.DisplayFor(modelItem => user.FullName)
-      </td>
-      <td>
-        @Html.DisplayFor(modelItem => user.Email)
-      </td>
-
-      <td>
-        @Html.ActionLink("Manage Role", "ManageUserRole", new { id = user.Id } )
-      </td>
-    </tr>
-  }
-
-</table>
+      $('#usersTable').DataTable();
+    })
+  </script>
+}
 

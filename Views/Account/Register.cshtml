@@ -59,11 +59,17 @@
       <div class="login-box card">
         <div class="card-body">
 
-          @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal form-material", role = "form", id = "loginform", enctype="multipart/form-data" }))
+          @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal form-material", role = "form", id = "loginform", enctype = "multipart/form-data" }))
           {
             @Html.AntiForgeryToken()
-            <h3 class="box-title m-b-20">Sign Up</h3>
-
+            <div class="row justify-content-between align-content-center">
+              <div class="col-5 align-self-center">
+                <h3 class="box-title">Sign In</h3>
+              </div>
+              <div class="col-2 m-b-20">
+                <img src="~/Images/aphid-icon_40x40-96.png" />
+              </div>
+            </div>
             @Html.ValidationSummary("", new { @class = "text-danger" })
 
 
@@ -85,7 +91,7 @@
             <div class="form-group">
               @Html.Label("Personal Avatar", new { @class = "col-10 control-label" })
               <div class="col-xs-10">
-                @Html.TextBoxFor(m => m.Avatar, new { type="file"})
+                @Html.TextBoxFor(m => m.Avatar, new { type = "file" })
               </div>
             </div>
 

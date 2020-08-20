@@ -23,5 +23,10 @@ namespace AphidBT.Helpers
             var user = db.Users.Find(userId);
             return user.FullName;
         }
+
+        public List<ApplicationUser> GetUserList()
+        {
+            return db.Users.ToList();
+        }
     }
 }

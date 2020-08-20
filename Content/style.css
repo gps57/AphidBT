@@ -1991,6 +1991,12 @@ form label {
     color: #67757c
 }
 
+.topbar ul.dropdown-user li form.button.btn.btn-link {
+    padding: 9px 15px;
+    display: block;
+    color: #67757c
+}
+
 .topbar ul.dropdown-user li a:hover {
     background: #f2f4f8;
     color: #1976d2;
@@ -9459,4 +9465,10 @@ input[type=checkbox]:not(:disabled).tabbed:focus~.lever:after, input[type=checkb
 
 .switch label input[type=checkbox]:checked+.lever.switch-col-white:after {
     background-color: #ffffff
+}
+
+/* Added by Glen */
+.attachmentIcon {
+    height: 30px;
+    width: 30px;
 }

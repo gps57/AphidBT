@@ -1,9 +1,12 @@
 ﻿using AphidBT.Helpers;
 using AphidBT.Models;
+using AphidBT.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 
 namespace AphidBT.Controllers
@@ -14,6 +17,8 @@ namespace AphidBT.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private UserRolesHelper roleHelper = new UserRolesHelper();
+        private ProjectHelper projectHelper = new ProjectHelper();
+        private UserRolesHelper userRolesHelper = new UserRolesHelper();
 
         // GET: Users
         public ActionResult Index()
@@ -38,7 +43,7 @@ namespace AphidBT.Controllers
             // Code in here is very similar to code we have already seen
             // I need to remove all the roles from this user and add back the chose role
             // spin through all the roles for this user and remove them
-            foreach(var role in roleHelper.ListUserRoles(id))
+            foreach (var role in roleHelper.ListUserRoles(id))
             {
                 roleHelper.RemoveUserFromRole(id, role);
             }
@@ -52,5 +57,104 @@ namespace AphidBT.Controllers
             // now that the user has been assigned a role I want to redirect them back to the page they came from
             return RedirectToAction("ManageUserRole", new { id });
         }
+
+        // GET: User/Manage/x
+        public ActionResult Manage(string userId)
+        {
+            var manageUserVM = new ManageUserVM();
+            var user = db.Users.Find(userId);
+
+            manageUserVM.UserId = userId;
+            manageUserVM.FirstName = user.FirstName;
+            manageUserVM.LastName = user.LastName;
+            manageUserVM.Email = user.Email;
+            manageUserVM.AvatarPath = user.AvatarPath;
+            manageUserVM.Role = userRolesHelper.ListUserRoles(userId).FirstOrDefault();
+
+            ViewBag.ProjectIds = new MultiSelectList(db.Projects, "Id", "Name", user.Projects.Select(p => p.Id));
+            ViewBag.RoleName = new SelectList(db.Roles, "Name", "Name", manageUserVM.Role);
+
+            return View(manageUserVM);
+        }
+
+        // POST: User/Details
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Submitter")]
+        public ActionResult Manage(ManageUserVM model, string roleName, List<int> projectIds, HttpPostedFileBase avatar)
+        {
+            var user = db.Users.Find(model.UserId);
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+
+            if(avatar == null)
+            {
+                user.AvatarPath = WebConfigurationManager.AppSettings["DefaultAvatarPath"];
+            }
+            else
+            {
+                if (FileUploadValidator.IsWebFriendlyImage(avatar))
+                {
+                    var fileName = FileStamp.MakeUnique(avatar.FileName);
+
+                    var serverFolder = WebConfigurationManager.AppSettings["DefaultServerFolder"];
+                    avatar.SaveAs(Path.Combine(Server.MapPath("~" + serverFolder), fileName));
+                    user.AvatarPath = $"{serverFolder}/{fileName}";
+                }
+            }
+
+            db.SaveChanges();
+
+            foreach (var role in roleHelper.ListUserRoles(user.Id))
+            {
+                roleHelper.RemoveUserFromRole(user.Id, role);
+            }
+
+            if (roleName != "")
+            {
+                roleHelper.AddUserToRole(user.Id, roleName);
+            }
+
+            // remove user from all projects
+            foreach (var p in projectHelper.ListUserProjects(user.Id))
+            {
+                projectHelper.RemoveUserFromProject(user.Id, p.Id);
+            }
+
+            // add user only to selected projects
+            if (projectIds != null)
+            {
+                foreach (var Id in projectIds)
+                {
+                    projectHelper.AddUserToProject(user.Id, Id);
+                }
+            }            
+            return RedirectToAction("Index", "Home");
+        }
+
+        //public ActionResult ManageUserRole(string id)
+
+        public ActionResult ManageAUser(string userId)
+        {
+            var manageUserVM = new ManageUserVM();
+            var user = db.Users.Find(userId);
+
+            manageUserVM.UserId = userId;
+            manageUserVM.FirstName = user.FirstName;
+            manageUserVM.LastName = user.LastName;
+            manageUserVM.Email = user.Email;
+            manageUserVM.AvatarPath = user.AvatarPath;
+            manageUserVM.Role = userRolesHelper.ListUserRoles(userId).FirstOrDefault();
+
+            ViewBag.ProjectIds = new MultiSelectList(db.Projects, "Id", "Name", user.Projects.Select(p => p.Id));
+            ViewBag.RoleName = new SelectList(db.Roles, "Name", "Name", manageUserVM.Role);
+
+            return View("Manage", manageUserVM);
+        }
+
     }
 }

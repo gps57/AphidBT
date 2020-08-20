@@ -62,13 +62,19 @@
             @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal form-material", id = "loginform", role = "form" }))
             {
               @Html.AntiForgeryToken()
-
-              <h3 class="box-title m-b-20">Sign In</h3>
+              <div class="row justify-content-between align-content-center">
+                <div class="col-5 align-self-center">
+                  <h3 class="box-title">Sign In</h3>
+                </div>
+                <div class="col-2 m-b-20">
+                  <img src="~/Images/aphid-icon_40x40-96.png" />
+                </div>
+              </div>
               @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
               <div class="form-group">
                 <div class="col-xs-12">
-                  <input class="form-control" type="text" placeholder="Username" name="email"/>
+                  <input class="form-control" type="text" placeholder="Username" name="email" />
                   @*@Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Username" })
                     @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })*@
                 </div>
@@ -76,7 +82,7 @@
 
               <div class="form-group">
                 <div class="col-xs-12">
-                  <input class="form-control" type="password" placeholder="Password" name="password"/>
+                  <input class="form-control" type="password" placeholder="Password" name="password" />
                   @*@Html.PasswordFor(m => m.Email, new { @class = "form-control", placeholder = "Password" })
                     @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })*@
                 </div>
@@ -117,7 +123,6 @@
   <!-- ============================================================== -->
   <!-- End Main wrapper and content -->
   <!-- ============================================================== -->
-
   <!-- ============================================================== -->
   <!-- Scripts -->
   <!-- ============================================================== -->

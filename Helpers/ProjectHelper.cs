@@ -11,6 +11,11 @@ namespace AphidBT.Helpers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public int ProjectCount()
+        {
+            return db.Projects.ToList().Count;
+        }
+
         // Add one or more users to a project
         public void AddUserToProject(string userId, int projectId)
         {

@@ -9,16 +9,18 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <!-- Favicon icon -->
-  <link rel="icon" type="image/png" sizes="16x16" href="~/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="~/Images/aphid-icon_40x40-96.png">
   <title>Aphid BT - The Ultimate Bug Tracker</title>
   <!-- Bootstrap Core CSS -->
   <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
   <!-- morris CSS -->
   <link href="~/Content/morris.css" rel="stylesheet" />
   <!-- Custom CSS -->
+  <link rel="stylesheet" href="~/Content/dropify.min.css" rel="stylesheet" />
   <link href="~/Content/style.css" rel="stylesheet" />
   <!-- You can change the theme colors from here -->
   <link href="~/Content/blue.css" rel="stylesheet" />
+
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -53,17 +55,19 @@
             <!-- Logo icon --><b>
               <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
               <!-- Dark Logo icon -->
-              <img src="~/Images/logo-icon.png" alt="homepage" class="dark-logo" />
-
+              @*<img src="~/Images/logo-icon.png" alt="homepage" class="dark-logo" />*@
+              <img src="~/Images/aphid-icon_40x40-96.png" alt="homepage" class="dark-logo" />
               <!-- Light Logo icon -->
               <img src="~/Images/logo-light-icon.png" alt="homepage" class="light-logo" />
             </b>
             <!--End Logo icon -->
             <!-- Logo text --><span>
               <!-- dark Logo text -->
-              <img src="~/Images/logo-text.png" alt="homepage" class="dark-logo" />
+              @*<img src="~/Images/logo-text.png" alt="homepage" class="dark-logo" />*@
+              <img src="~/Images/aphid-text_128x40-96.png" alt="homepage" class="dark-logo" />
               <!-- Light Logo text -->
-              <img src="~/Images/logo-light-text.png" class="light-logo" alt="homepage" />
+              @*<img src="~/Images/logo-light-text.png" class="light-logo" alt="homepage" />*@
+              @*<img src="~/Images/aphid-text_128x35-96.png" alt="homepage" class="dark-logo" />*@
             </span>
           </a>
         </div>
@@ -328,17 +332,17 @@
                   </li>
                   <li role="separator" class="divider"></li>
                   <li><a href="#"><i class="ti-user"></i> My Profile</a></li>
-                  <li><a href="#"><i class="ti-wallet"></i> My Balance</a></li>
-                  <li><a href="#"><i class="ti-email"></i> Inbox</a></li>
+                  <li><a href="/tickets/index"><i class="ti-wallet"></i> My Tickets</a></li>
+                  <li><a href="#"><i class="ti-email"></i> Notifications</a></li>
                   <li role="separator" class="divider"></li>
                   <li><a href="#"><i class="ti-settings"></i> Account Setting</a></li>
                   <li role="separator" class="divider"></li>
                   <li>
-                    @*<a href="/Account/LogOff"><i class="fa fa-power-off"></i> LogOff</a>*@
                     @using (Html.BeginForm("LogOff", "Account"))
                     {
                       @Html.AntiForgeryToken();
-                    <button class="btn btn-link" type="submit"><i class="fa fa-power-off"></i> Logout</button>
+                      <button class="btn btn-link" type="submit"><i class="fa fa-power-off"></i> Logout</button>
+
                     }
                   </li>
                 </ul>
@@ -363,32 +367,32 @@
           <div class="profile-img">
             <img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" />
             <!-- this is blinking heartbit-->
-            <div class="notify setpos"> <span class="heartbit"></span> <span class="point"></span> </div>
+            @*<div class="notify setpos"> <span class="heartbit"></span> <span class="point"></span> </div>*@
           </div>
           <!-- User profile text-->
-          <div class="profile-text">
+          <!--<div class="profile-text">
             <h5>Glen P Stewart</h5>
             <a href="#" class="dropdown-toggle u-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"><i class="mdi mdi-settings"></i></a>
             <a href="app-email.html" class="" data-toggle="tooltip" title="Email"><i class="mdi mdi-gmail"></i></a>
             <a href="pages-login.html" class="" data-toggle="tooltip" title="Logout"><i class="mdi mdi-power"></i></a>
-            <div class="dropdown-menu animated flipInY">
-              <!-- text-->
-              <a href="#" class="dropdown-item"><i class="ti-user"></i> My Profile</a>
-              <!-- text-->
-              <a href="#" class="dropdown-item"><i class="ti-wallet"></i> My Balance</a>
-              <!-- text-->
-              <a href="#" class="dropdown-item"><i class="ti-email"></i> Inbox</a>
-              <!-- text-->
-              <div class="dropdown-divider"></div>
-              <!-- text-->
-              <a href="#" class="dropdown-item"><i class="ti-settings"></i> Account Setting</a>
-              <!-- text-->
-              <div class="dropdown-divider"></div>
-              <!-- text-->
-              <a href="login.html" class="dropdown-item"><i class="fa fa-power-off"></i> Logout</a>
-              <!-- text-->
-            </div>
-          </div>
+            <div class="dropdown-menu animated flipInY">-->
+          <!-- text-->
+          <!--<a href="#" class="dropdown-item"><i class="ti-user"></i> My Profile</a>-->
+          <!-- text-->
+          <!--<a href="#" class="dropdown-item"><i class="ti-wallet"></i> My Balance</a>-->
+          <!-- text-->
+          <!--<a href="#" class="dropdown-item"><i class="ti-email"></i> Inbox</a>-->
+          <!-- text-->
+          <!--<div class="dropdown-divider"></div>-->
+          <!-- text-->
+          <!--<a href="#" class="dropdown-item"><i class="ti-settings"></i> Account Setting</a>-->
+          <!-- text-->
+          <!--<div class="dropdown-divider"></div>-->
+          <!-- text-->
+          <!--<a href="login.html" class="dropdown-item"><i class="fa fa-power-off"></i> Logout</a>-->
+          <!-- text-->
+          <!--</div>
+          </div>-->
         </div>
         <!-- End User profile text-->
         <!-- ===================================== -->
@@ -553,7 +557,14 @@
       <!-- footer -->
       <!-- ============================================================== -->
       <footer class="footer">
-        © 2019 Admin Press Admin by themedesigner.in
+        <div class="row align-content-center">
+          <div class="col-2 mr-2">
+            <img src="~/Images/aphid-logo_171x40.png" />
+            </div>
+          <div class="col-5 pt-2">
+            © @DateTime.Now.ToString("yyyy") by Glen P Stewart
+          </div>
+        </div>
       </footer>
       <!-- ============================================================== -->
       <!-- End footer -->
@@ -635,10 +646,9 @@
   <!-- Style switcher -->
   <!-- ============================================================== -->
   <script src="~/Scripts/jQuery.style.switcher.js"></script>
+  <script src="~/Scripts/dropify.min.js"></script>
 
   @RenderSection("scripts", required: false)
-
-
 
 </body>
 

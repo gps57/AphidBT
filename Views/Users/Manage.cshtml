@@ -1,0 +1,103 @@
+﻿@using AphidBT.Models
+
+@model AphidBT.ViewModels.ManageUserVM
+
+@{
+  ViewBag.Title = "Manage User";
+}
+
+@using (Html.BeginForm("Manage", "Users", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+  @Html.AntiForgeryToken()
+  @Html.HiddenFor(m => m.UserId)
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card card-outline-info">
+        <div class="card-header">
+          <h4 class="m-b-0 text-white">Manage User </h4>
+        </div>
+        <div class="card-body">
+          <div class="card-title">
+            <div class="row">
+              <div class="col-1">
+                <div class="user-img"><img src="@Model.AvatarPath" alt="user" class="img-circle img-fluid mb-2"></div>
+              </div>
+              <div class="col-3 align-self-center">
+                <h3>@Model.FirstName @Model.LastName</h3>
+              </div>
+            </div>
+          </div>
+          <hr>
+
+          <div class="row p-t-20">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">First Name</label>
+                <input type="text" id="firstName" name="FirstName" class="form-control" value=@Model.FirstName>
+                <small class="form-control-feedback"> Enter the first name </small>
+              </div>
+            </div>
+            <!--/span-->
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">Last Name</label>
+                <input type="text" id="lastName" name="LastName" class="form-control" value=@Model.LastName>
+                <small class="form-control-feedback"> Enter the last name </small>
+              </div>
+            </div>
+            <!--/span-->
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">Email Address</label>
+                <input type="text" id="Email" name="Email" class="form-control" value=@Model.Email>
+                <small class="form-control-feedback"> Enter the email address </small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">Role</label>
+                @Html.DropDownList("RoleName", null, "--no role--", new { @class = "custom-select pull-right form-control" })
+                <p><small class="form-control-feedback"> Enter the role </small></p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Optional Avatar field -->
+              <div class="form-group">
+                <label class="control-label">Personal Avatar</label>
+                <input type="file" id="input-file-now" name="Avatar" class="dropify form-control" data-default-file="@Model.AvatarPath" />
+                <p><small class="form-control-feedback"> Click or drag to change Avatar image </small></p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="control-label">Projects</label>
+                @Html.ListBox("ProjectIds", null, new { @class = "custom-select pull-right form-control", @size = 7 })
+                <p><small class="form-control-feedback"> Select projects for this user </small></p>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Save</button>
+            <button type="button" class="btn btn-inverse">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+}
+
+@section Scripts {
+  <script>
+    $(document).ready(function () {
+      $('.dropify').dropify();
+    });
+  </script>
+  <script src="~/Scripts/jQuery.style.switcher.js"></script>
+}
