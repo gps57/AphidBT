@@ -138,23 +138,5 @@ namespace AphidBT.Controllers
 
         //public ActionResult ManageUserRole(string id)
 
-        public ActionResult ManageAUser(string userId)
-        {
-            var manageUserVM = new ManageUserVM();
-            var user = db.Users.Find(userId);
-
-            manageUserVM.UserId = userId;
-            manageUserVM.FirstName = user.FirstName;
-            manageUserVM.LastName = user.LastName;
-            manageUserVM.Email = user.Email;
-            manageUserVM.AvatarPath = user.AvatarPath;
-            manageUserVM.Role = userRolesHelper.ListUserRoles(userId).FirstOrDefault();
-
-            ViewBag.ProjectIds = new MultiSelectList(db.Projects, "Id", "Name", user.Projects.Select(p => p.Id));
-            ViewBag.RoleName = new SelectList(db.Roles, "Name", "Name", manageUserVM.Role);
-
-            return View("Manage", manageUserVM);
-        }
-
     }
 }
