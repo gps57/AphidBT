@@ -3,6 +3,9 @@
 
 @{
   ViewBag.Title = "Ticket Dashboard";
+  UserHelper userHelper = new UserHelper();
+  ProjectHelper projectHelper = new ProjectHelper();
+  TicketHelper ticketHelper = new TicketHelper();
 }
 
 
@@ -10,259 +13,566 @@
   <div class="col-lg-12">
     <div class="card card-outline-info">
       <div class="card-header">
-        <h4 class="m-b-0 text-white">@Model.Project.Name - Issue Ticket: @Model.Title  </h4>
+        <h4 class="m-b-0 text-white">@Model.Project.Name Issue - Title: @Model.Title  </h4>
+      </div>
+      <div class="card-body px-4">
+        <div class="card-title">
+          <!-- The following row is for submitter/developer info -->
+          <div class="row">
+            <div class="col-12 col-lg-6 justify-content-center">
+              <div class="row justify-content-center">
+                <h3>Submitted by:</h3>
+              </div>
+              <div class="row justify-content-center">
+                <div class="col-2">
+                  <div class="user-img"><img src="@Model.Submitter.AvatarPath" alt="user" class="img-circle img-fluid mb-2"></div>
+                </div>
+                <div class="col-5 align-self-center">
+                  <h3>@Model.Submitter.FullName</h3>
+                </div>
+                <div class="col-2 align-self-center">
+                  @* Right now this points to the submitter's Manage page. *@
+                  @* TODO: It should take the user to their profile page instead. Or just to a model shows *@
+                  @* basic info. *@
+                  <a href="@Url.Action("Manage", "Users", new { userId = Model.SubmitterId })" class="model_img img-responsive"><i class="ti-info-alt"></i></a>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6 align-self-center">
+              <div class="row justify-content-center">
+                <div class="col-4"><h3>Assigned to:</h3></div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                {
+                  <div class="col-2 align-self-center">
+                    <a class="model_img img-responsive" data-toggle="modal" data-target="#responsive-modal"><i class="ti-pencil-alt"></i></a>
+                  </div>
+                }
+              </div>
+              <div class="row justify-content-center">
+                <div class="col-2">
+                  @if (Model.DeveloperId != null)
+                  {
+                    <div class="user-img"><img src="@Model.Developer.AvatarPath" alt="user" class="img-circle img-fluid mb-2"></div>
+                  }
+                  else
+                  {
+                    <div class="user-img"><img src="~/Images/Avatars/default_avatar.png" alt="user" class="img-circle img-fluid mb-2"></div>
+                  }
+                </div>
+                <div class="col-6 align-self-center">
+                  @if (Model.DeveloperId != null)
+                  {
+                    <h3>@Model.Developer.FullName</h3>
+                  }
+                  else
+                  {
+                    if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                    {
+                      <button class="btn btn-sm btn-rounded btn-info model_img img-responsive" data-toggle="modal" data-target="#responsive-modal">Assign Developer</button>
+                    }
+                    else
+                    {
+                      <p>Currently Unassigned</p>
+                    }
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr />
+        </div> <!-- End Card Title -->
+        <!-- Card body after card title -->
+        @using (Html.BeginForm("Update", "Tickets", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+          @Html.AntiForgeryToken()
+
+          <div class="row">
+            @* Ticket info *@
+            <div class="col-md-6">
+              <!-- Ticket Title -->
+              <div class="form-group">
+                <fieldset disabled>
+                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  {
+                    <div class="row">
+                      <div class="col-1 ml-2">
+                        <a class="model_img img-responsive" data-toggle="modal" data-target="#edit-title"><i class="ti-pencil-alt"></i></a>
+                      </div>
+                      <div class="col-10>">
+                        <label for="title-input">Ticket Title</label>
+                      </div>
+                    </div>
+                  }
+                  else
+                  {
+                    <label for="title-input">Ticket Title</label>
+                  }
+                  <input type="text" id="title-input" class="form-control" value="@Model.Title">
+                </fieldset>
+              </div>
+              <!-- Ticket Description -->
+              <div class="form-group">
+                <fieldset disabled>
+                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  {
+                    <div class="row">
+                      <div class="col-1 ml-2">
+                        <a class="model_img img-responsive" data-toggle="modal" data-target="#edit-description"><i class="ti-pencil-alt"></i></a>
+                      </div>
+                      <div class="col-10>">
+                        <label for="description-input">Ticket Description</label>
+                      </div>
+                    </div>
+                  }
+                  else
+                  {
+                    <label for="description-input">Ticket Description</label>
+                  }
+                  <textarea class="form-control" id="description-input" rows="5">@Model.Description</textarea>
+                </fieldset>
+              </div>
+            </div>
+            <div class="col-6">
+              <!-- Ticket Priority -->
+              <div class="form-group">
+                <fieldset disabled>
+                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  {
+                    <div class="row">
+                      <div class="col-1 ml-2">
+                        <a class="model_img img-responsive" data-toggle="modal" data-target="#edit-priority"><i class="ti-pencil-alt"></i></a>
+                      </div>
+                      <div class="col-10">
+                        <label for="priority">Ticket Priority</label>
+                      </div>
+                    </div>
+                  }
+                  else
+                  {
+                    <label for="priority">Ticket Priority</label>
+                  }
+                  <input type="text" id="priority" class="form-control" placeholder=@Model.TicketPriority.Name>
+                </fieldset>
+              </div>
+              <!-- Ticket Status -->
+              <div class="form-group">
+                <fieldset disabled>
+                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  {
+                    <div class="row">
+                      <div class="col-1 ml-2">
+                        <a class="model_img img-responsive" data-toggle="modal" data-target="#edit-status"><i class="ti-pencil-alt"></i></a>
+                      </div>
+                      <div class="col-10">
+                        <label for="status">Ticket Status</label>
+                      </div>
+                    </div>
+                  }
+                  else
+                  {
+                    <label for="status">Ticket Statua</label>
+                  }
+                  <input type="text" id="status" class="form-control" placeholder=@Model.TicketStatus.Name>
+                </fieldset>
+              </div>
+
+              <!-- Ticket Type -->
+              <div class="form-group">
+                <fieldset disabled>
+                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  {
+                    <div class="row">
+                      <div class="col-1 ml-2">
+                        <a class="model_img img-responsive" data-toggle="modal" data-target="#edit-type"><i class="ti-pencil-alt"></i></a>
+                      </div>
+                      <div class="col-10">
+                        <label for="ticket-type">Ticket Type</label>
+                      </div>
+                    </div>
+                  }
+                  else
+                  {
+                    <label for="ticket-type">Ticket Type</label>
+                  }
+                  <input type="text" id="ticket-type" class="form-control" placeholder=@Model.TicketType.Name>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+        }
+        @*<div class="form-actions">
+            <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Save</button>
+            <button type="button" class="btn btn-inverse">Cancel</button>
+          </div>*@
       </div>
     </div>
   </div>
-</div>
 
-<div class="container">
-
-  <div class="row">
-    @* Ticket info *@
-    <div class="col-10">
-      <p>Ticket Data</p>
-      <br />
-      <h2>Ticket Title: @Model.Title</h2>
-      <h2>Ticket Priority: @Model.TicketPriority.Name</h2>
-      <h2>Ticket Status: @Model.TicketStatus.Name</h2>
-      <h2>Ticket Type: @Model.TicketType.Name</h2>
-    </div>
-  </div>
-
-  <div class="row">
+  <div class="row ml-1">
     <!-- Comments column -->
     <div class="col-12 col-lg-6">
-      <div class="card">
-        <div class="card-body bg-info">
-          <h4 class="text-white card-title">Ticket Comments</h4>
-          <h6 class="card-subtitle text-white m-0 op-5">Comments on @Model.Project.Name-@Model.Title   </h6>
+      <div class="card rounded">
+        <div class="card-body bg-info rounded-top">
+          <div class="row">
+            <div class="col-10">
+              <h4 class="text-white card-title">Comments</h4>
+              <h6 class="card-subtitle text-white m-0 op-5">Comments on @Model.Project.Name @Model.Title Issue (newest at top)</h6>
+            </div>
+            <div class="col-2 justify-self-end align-self-center">
+              <button class="btn btn-circle btn-danger model_img img-responsive" data-toggle="modal" data-target="#add-comment"><i class="ti-plus"></i></button>
+            </div>
+
+          </div>
         </div>
         <div class="card-body">
-          <div id="comment-scroll">
+          <div id="comments-scroll">
             <div class="comment-widgets m-b-20">
-              <!-- foreach loop for comments would start here -->
-              <!-- Comment Row -->
-              <div class="d-flex flex-row comment-row">
-                <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
-                <div class="comment-text w-100">
-                  <h5>James Anderson</h5>
-                  <div class="comment-footer">
-                    <span class="date">April 14, 2016</span>
-                    <span class="label label-info">Pending</span> <span class="action-icons">
-                      <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
-                      <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
-                      <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-                    </span>
+              <!-- Comments -->
+              @foreach (var comment in Model.TicketComments.OrderByDescending(b => b.Created).ToList())
+              {
+                <div class="d-flex flex-row comment-row">
+                  <div class="p-2"><span class="round"><img src="@comment.User.AvatarPath" alt="user" width="50"></span></div>
+                  <div class="comment-text w-100">
+                    <h5>@comment.User.FullName</h5>
+                    <div class="comment-footer">
+                      <span class="date">@comment.Created.ToString("dd MMM yyyy")</span>
+
+                    </div>
+                    <p class="m-b-5 m-t-10">@comment.Comment</p>
                   </div>
-                  <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry.</p>
                 </div>
-              </div>
-              <!-- This is the end of one comment, end of foreach loop -->
-              <!-- Comment Row -->
-              <div class="d-flex flex-row comment-row ">
-                <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
-                <div class="comment-text active w-100">
-                  <h5>Michael Jorden</h5>
-                  <div class="comment-footer">
-                    <span class="date">April 14, 2016</span>
-                    <span class="label label-success">Approved</span> <span class="action-icons active">
-                      <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
-                      <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle text-success"></i></a>
-                      <a href="javascript:void(0)"><i class="mdi mdi-heart text-danger"></i></a>
-                    </span>
-                  </div>
-                  <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry..</p>
-                </div>
-              </div>
-              <!-- Comment Row -->
-              <div class="d-flex flex-row comment-row">
-                <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
-                <div class="comment-text w-100">
-                  <h5>Johnathan Doeting</h5>
-                  <div class="comment-footer">
-                    <span class="date">April 14, 2016</span>
-                    <span class="label label-danger">Rejected</span> <span class="action-icons">
-                      <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
-                      <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
-                      <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-                    </span>
-                  </div>
-                  <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry.</p>
-                </div>
-              </div>
-              <!-- Comment Row -->
-              <div class="d-flex flex-row comment-row">
-                <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
-                <div class="comment-text w-100">
-                  <h5>James Anderson</h5>
-                  <div class="comment-footer">
-                    <span class="date">April 14, 2016</span>
-                    <span class="label label-info">Pending</span> <span class="action-icons">
-                      <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
-                      <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
-                      <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-                    </span>
-                  </div>
-                  <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry..</p>
-                </div>
-              </div>
+              }
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="row">
-    @* Ticket Comments *@
-    <div class="col-10">
-      <hr />
-      <h4>Ticket Comments</h4>
-      @using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
-      {
-        @Html.AntiForgeryToken()
-
-        <div class="form-horizontal">
-          <h4>Create Ticket Comment</h4>
-
-          @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-          @Html.Hidden("TicketId", Model.Id)
-
-          <div class="form-group">
-            @Html.Label("Comment", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-              @Html.TextArea("Comment", new { htmlAttributes = new { @class = "form-control" } })
+    <!-- Attachments column -->
+    <div class="col-12 col-lg-6">
+      <div class="card rounded">
+        <div class="card-body bg-info rounded-top">
+          <!-- A row for the title bar-->
+          <div class="row">
+            <div class="col-10">
+              <h4 class="text-white card-title">List Of Attachments</h4>
+              <h6 class="card-subtitle text-white m-0 op-5">Attachments for @Model.Project.Name @Model.Title Issue</h6>
             </div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-              <input type="submit" value="Create Comment" class="btn btn-primary" />
+            <div class="col-2 justify-self-end align-self-center">
+              <button class="btn btn-circle btn-danger model_img img-responsive" data-toggle="modal" data-target="#add-attachment"><i class="ti-plus"></i></button>
             </div>
           </div>
         </div>
-      }
-      @* Display existing comments *@
-      <hr />
-      <h4>List of Comments</h4>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>
-              @Html.DisplayName("Name")
-            </th>
-            <th>
-              @Html.DisplayName("Comment")
-            </th>
-            <th>
-              @Html.DisplayName("Create Date")
-            </th>
-          </tr>
-        </thead>
 
-        <tbody>
-          @foreach (var comment in Model.TicketComments.ToList())
-          {
+        @* Display existing attachments *@
+        <hr />
+        <table class="table">
+          <thead>
             <tr>
-              <td>
-                @Html.DisplayFor(modelItem => comment.User.FullName)
-              </td>
-              <td>
-                @Html.DisplayFor(modelItem => comment.Comment)
-              </td>
-              <td>
-                @Html.DisplayFor(modelItem => comment.Created)
-              </td>
+              <th>
+              </th>
+              <th>
+                @Html.DisplayName("Name")
+              </th>
+              <th>
+                @Html.DisplayName("Path")
+              </th>
             </tr>
-          }
-        </tbody>
+          </thead>
 
-      </table>
+          <tbody>
+            @foreach (var attachment in Model.TicketAttachments.ToList())
+            {
+              <tr>
+                <td>
+                  @* This will hold the icon *@
+                  <img src="@IconHelper.GetIcon(Path.GetExtension(attachment.FilePath))" class="img-responsive" style="height: 25px; width:25px;" />
+                </td>
+                <td>
+                  @Html.DisplayFor(modelItem => attachment.FileName)
+                </td>
+                <td>
+                  <a target="_blank" href="@attachment.FilePath">@attachment.FilePath</a>
 
+                </td>
+              </tr>
+            }
+          </tbody>
 
+        </table>
+
+      </div>
     </div>
   </div>
 
 
-  <div class="row">
-    @* Ticket Attachments (add and show) *@
-    <div class="col-10">
-      <hr />
-      <h4>Create A Ticket Attachment</h4>
-      @* Adding a new attachment *@
-      @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" }))
-      {
-        @Html.AntiForgeryToken()
-        @Html.Hidden("TicketId", Model.Id)
 
-        <div class="form-group">
-          @Html.Label("File Name", htmlAttributes: new { @class = "control-label col-2" })
-          <div class="col-10">
-            @Html.Editor("FileName", new { htmlAttributes = new { @class = "form-control" } })
+  <!-- ********************************************************* -->
+  <!--                       Modals -->
+  <!-- ********************************************************* -->
+  <!-- Assign Developer Modal -->
+  <div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        @using (Html.BeginForm("AssignDeveloper", "Tickets", new { ticketId = Model.Id }))
+        {
+          @Html.AntiForgeryToken()
+
+          <div class="modal-header">
+            <h4 class="modal-title">Assign Developer</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           </div>
-        </div>
 
-        <div class="form-group">
-          @Html.Label("Description", htmlAttributes: new { @class = "control-label col-2" })
-          <div class="col-10">
-            @Html.TextArea("AttachmentDescription", new { htmlAttributes = new { @class = "form-control" } })
+          <div class="modal-body">
+            <div class="form-group mb-5">
+              @{
+                var developers = new SelectList(projectHelper.ListUsersOnProjectInRole(Model.Projectid, "Developer"), "Id", "Email");
+              }
+              @Html.Label("Name", htmlAttributes: new { @class = "control-label col-md-2" })
+              @Html.DropDownList("DeveloperId", developers, new { @class = "custom-select pull-right form-control" })
+            </div>
+
           </div>
-        </div>
 
-        <div class="form-group">
-          @Html.Label("Attachment", htmlAttributes: new { @class = "control-label col-2" })
-          <div class="col-10">
-            <input type="file" name="file" />
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
           </div>
-        </div>
+        }
+      </div>
+    </div>
+  </div>
 
-        <div class="form-group">
-          <div class="col-10">
-            <input type="submit" value="Add Attachment" class="btn btn-primary" />
+  <!-- Edit Title Modal -->
+  <div id="edit-title" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        @using (Html.BeginForm("UpdateTicketTitle", "Tickets", new { ticketId = Model.Id }))
+        {
+          @Html.AntiForgeryToken()
+
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Ticket Title</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           </div>
-        </div>
-      }
 
-      @* Display existing attachments *@
-      <hr />
-      <h4>List of Attachments</h4>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>
-            </th>
-            <th>
-              @Html.DisplayName("Name")
-            </th>
-            <th>
-              @Html.DisplayName("Path")
-            </th>
-          </tr>
-        </thead>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="control-label">Ticket Title</label>
+              @Html.Editor("TicketTitle", new { htmlAttributes = new { @class = "form-control", value = "@Model.Title" } })
+              <small class="form-control-feedback"> Enter the ticket title </small>
+            </div>
+          </div>
 
-        <tbody>
-          @foreach (var attachment in Model.TicketAttachments.ToList())
-          {
-            <tr>
-              <td>
-                @* This will hold the icon *@
-                <img src="@IconHelper.GetIcon(Path.GetExtension(attachment.FilePath))" class="img-responsive" style="height: 25px; width:25px;" />
-              </td>
-              <td>
-                @Html.DisplayFor(modelItem => attachment.FileName)
-              </td>
-              <td>
-                <a target="_blank" href="@attachment.FilePath">@attachment.FilePath</a>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+          </div>
 
-              </td>
-            </tr>
-          }
-        </tbody>
+        }
+      </div>
+    </div>
+  </div>
 
-      </table>
+  <!-- Edit Description Modal -->
+  <div id="edit-description" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        @using (Html.BeginForm("UpdateTicketDescription", "Tickets", new { ticketId = Model.Id }))
+        {
+          @Html.AntiForgeryToken()
+
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Ticket Description</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          </div>
+
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="modal-description-input" class="control-label">Ticket Description</label>
+              <textarea name="TicketDescription" class="form-control" id="modal-description-input" rows="5">@Model.Description</textarea>
+              <small class="form-control-feedback"> Enter the ticket description </small>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+          </div>
+
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Priority Modal -->
+  <div id="edit-priority" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        @using (Html.BeginForm("UpdateTicketPriority", "Tickets", new { ticketId = Model.Id }))
+        {
+          @Html.AntiForgeryToken()
+
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Ticket Priority</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          </div>
+
+          <div class="modal-body">
+            <div class="form-group mb-5">
+              @{
+                var priorities = new SelectList(ticketHelper.ListTicketPriorities(), "Id", "Name");
+              }
+              @Html.Label("Ticket Priority", htmlAttributes: new { @class = "control-label" })
+              @Html.DropDownList("TicketPriorityId", priorities, new { @class = "custom-select pull-right form-control" })
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Status Modal -->
+  <div id="edit-status" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        @using (Html.BeginForm("UpdateTicketStatus", "Tickets", new { ticketId = Model.Id }))
+        {
+          @Html.AntiForgeryToken()
+
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Ticket Status</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          </div>
+
+          <div class="modal-body">
+            <div class="form-group mb-5">
+              @{
+                var statuses = new SelectList(ticketHelper.ListTicketStatuses(), "Id", "Name");
+              }
+              @Html.Label("Ticket Status", htmlAttributes: new { @class = "control-label" })
+              @Html.DropDownList("TicketStatusId", statuses, new { @class = "custom-select pull-right form-control" })
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Type Modal -->
+  <div id="edit-type" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        @using (Html.BeginForm("UpdateTicketType", "Tickets", new { ticketId = Model.Id }))
+        {
+          @Html.AntiForgeryToken()
+
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Ticket Type</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          </div>
+
+          <div class="modal-body">
+            <div class="form-group mb-5">
+              @{
+                var ticketTypes = new SelectList(ticketHelper.ListTicketTypes(), "Id", "Name");
+              }
+              @Html.Label("Ticket Types", htmlAttributes: new { @class = "control-label" })
+              @Html.DropDownList("TicketTypeId", ticketTypes, new { @class = "custom-select pull-right form-control" })
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Comment Modal -->
+  <div id="add-comment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        @using (Html.BeginForm("Create", "TicketComments", new { ticketId = Model.Id }))
+        {
+          @Html.AntiForgeryToken()
+
+          <div class="modal-header">
+            <h4 class="modal-title">Add A Comment</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          </div>
+
+          <div class="modal-body">
+            <div class="form-group mb-5">
+              <label for="modal-add-comment" class="control-label">Comment</label>
+              <textarea name="Comment" class="form-control" id="modal-add-comment" rows="5"></textarea>
+              <small class="form-control-feedback"> Enter a comment </small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Attachment Modal -->
+  <div id="add-attachment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        @* @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" })) { }*@
+        @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+          @Html.AntiForgeryToken()
+          @Html.Hidden("TicketId", Model.Id)
+
+          <div class="modal-header">
+            <h4 class="modal-title">Add An Attachment</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          </div>
+
+          <div class="modal-body ml-1">
+            <div class="form-group">
+              @*<label class="control-label">Ticket Title</label>
+                @Html.Editor("TicketTitle", new { htmlAttributes = new { @class = "form-control", value = "@Model.Title" } })
+                <small class="form-control-feedback"> Enter the ticket title </small>*@
+
+              @*@Html.Label("File Name", htmlAttributes: new { @class = "control-label" })*@
+              <label class="control-label">File Name</label>
+              @Html.Editor("FileName", new { htmlAttributes = new { @class = "form-control" } })
+              <small class="form-control-feedback"> Enter a name for attachment </small>
+            </div>
 
 
+            <div class="form-group">
+              <label for="modal-add-attachment" class="control-label">Attachment Description</label>
+              <textarea name="AttachmentDescription" class="form-control" id="modal-add-attachment" rows="5"></textarea>
+              <small class="form-control-feedback"> Enter a description of attachment </small>
+            </div>
+
+          <div class="form-group">
+            <div class="form-control-file"><input type="file" name="file" id="modal-attachment-file" /></div>
+
+          </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+          </div>
+        }
+      </div>
     </div>
   </div>
 
@@ -280,4 +590,4 @@
       height: '400px'
     });
   </script>
-  }
+}

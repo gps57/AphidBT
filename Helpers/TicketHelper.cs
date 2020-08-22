@@ -204,5 +204,21 @@ namespace AphidBT.Helpers
             }
             return tickets;
         }
+
+        public List<TicketPriority> ListTicketPriorities()
+        {
+            return db.TicketPriorities.ToList();
+        }
+
+        public List<TicketStatus> ListTicketStatuses()
+        {
+            return db.TicketStatuses.ToList();
+        }
+
+        public List<TicketType> ListTicketTypes()
+        {
+            return db.TicketTypes.ToList();
+        }
+
     }
 }

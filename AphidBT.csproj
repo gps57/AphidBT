@@ -479,6 +479,7 @@
     <Content Include="Content\flags\zw.svg" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\fonts\themify.svg" />
+    <Content Include="Content\green.css" />
     <Content Include="Content\linea.css" />
     <Content Include="Content\materialdesignicons.min.css" />
     <Content Include="Content\morris.css" />

@@ -9,6 +9,7 @@ namespace AphidBT.Helpers
     public class UserHelper
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UserRolesHelper roleHelper = new UserRolesHelper();
 
         public string GetFullName(string userId)
         {
@@ -27,6 +28,11 @@ namespace AphidBT.Helpers
         public List<ApplicationUser> GetUserList()
         {
             return db.Users.ToList();
+        }
+
+        public List<ApplicationUser> GetUserList(string role)
+        {
+            return roleHelper.UsersInRole(role).ToList();
         }
     }
 }

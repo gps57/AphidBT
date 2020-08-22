@@ -58,7 +58,7 @@ namespace AphidBT.Controllers
 
             // this check might not be necessary after testing is done because the [Authorize] check will
             // send them to the login page if they are not logged in before it does anything else.
-            if(userId == null)
+            if (userId == null)
             {
                 return RedirectToAction("Index");
             }
@@ -163,5 +163,77 @@ namespace AphidBT.Controllers
             }
             base.Dispose(disposing);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult AssignDeveloper(string developerId, int ticketId)
+        {
+            var ticket = db.Tickets.Find(ticketId);
+
+            if(developerId == null)
+            {
+                ticket.TicketStatusId = db.TicketStatuses.Where(s => s.Name == "Open").FirstOrDefault().Id;
+            }
+            else
+            {
+                ticket.TicketStatusId = db.TicketStatuses.Where(s => s.Name == "Assigned").FirstOrDefault().Id;
+            }
+
+            ticket.DeveloperId = developerId;
+            db.SaveChanges();
+            return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId});
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult UpdateTicketDescription(string ticketDescription, int ticketId)
+        {
+            db.Tickets.Find(ticketId).Description = ticketDescription;
+            db.SaveChanges();
+            return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult UpdateTicketTitle(string ticketTitle, int ticketId)
+        {
+            db.Tickets.Find(ticketId).Title = ticketTitle;
+            db.SaveChanges();
+            return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult UpdateTicketPriority(int ticketPriorityId, int ticketId)
+        {
+            db.Tickets.Find(ticketId).TicketPriorityId = ticketPriorityId;
+            db.SaveChanges();
+            return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult UpdateTicketStatus(int ticketStatusId, int ticketId)
+        {
+            db.Tickets.Find(ticketId).TicketStatusId = ticketStatusId;
+            db.SaveChanges();
+            return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult UpdateTicketType(int ticketTypeId, int ticketId)
+        {
+            db.Tickets.Find(ticketId).TicketTypeId = ticketTypeId;
+            db.SaveChanges();
+            return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
+        }
+
     }
 }
