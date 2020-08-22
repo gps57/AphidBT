@@ -208,7 +208,7 @@
     </div>
   </div>
 
-  <div class="row ml-1">
+  <div class="row">
     <!-- Comments column -->
     <div class="col-12 col-lg-6">
       <div class="card rounded">
@@ -265,42 +265,44 @@
         </div>
 
         @* Display existing attachments *@
-        <hr />
-        <table class="table">
-          <thead>
-            <tr>
-              <th>
-              </th>
-              <th>
-                @Html.DisplayName("Name")
-              </th>
-              <th>
-                @Html.DisplayName("Path")
-              </th>
-            </tr>
-          </thead>
+        <div class="card-body">
+          <div id="attachments-scroll">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>
+                  </th>
+                  <th>
+                    @Html.DisplayName("Name")
+                  </th>
+                  <th>
+                    @Html.DisplayName("Path")
+                  </th>
+                </tr>
+              </thead>
 
-          <tbody>
-            @foreach (var attachment in Model.TicketAttachments.ToList())
-            {
-              <tr>
-                <td>
-                  @* This will hold the icon *@
-                  <img src="@IconHelper.GetIcon(Path.GetExtension(attachment.FilePath))" class="img-responsive" style="height: 25px; width:25px;" />
-                </td>
-                <td>
-                  @Html.DisplayFor(modelItem => attachment.FileName)
-                </td>
-                <td>
-                  <a target="_blank" href="@attachment.FilePath">@attachment.FilePath</a>
+              <tbody>
+                @foreach (var attachment in Model.TicketAttachments.ToList())
+                {
+                  <tr>
+                    <td>
+                      @* This will hold the icon *@
+                      <img src="@IconHelper.GetIcon(Path.GetExtension(attachment.FilePath))" class="img-responsive" style="height: 25px; width:25px;" />
+                    </td>
+                    <td>
+                      @Html.DisplayFor(modelItem => attachment.FileName)
+                    </td>
+                    <td>
+                      <a target="_blank" href="@attachment.FilePath">@attachment.FilePath</a>
 
-                </td>
-              </tr>
-            }
-          </tbody>
+                    </td>
+                  </tr>
+                }
+              </tbody>
 
-        </table>
-
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -561,10 +563,10 @@
               <small class="form-control-feedback"> Enter a description of attachment </small>
             </div>
 
-          <div class="form-group">
-            <div class="form-control-file"><input type="file" name="file" id="modal-attachment-file" /></div>
+            <div class="form-group">
+              <div class="form-control-file"><input type="file" name="file" id="modal-attachment-file" /></div>
 
-          </div>
+            </div>
 
           </div>
           <div class="modal-footer">
@@ -589,5 +591,10 @@
     $('#comments-scroll').slimScroll({
       height: '400px'
     });
+
+    $('#attachments-scroll').slimScroll({
+      height: '400px'
+    });
+
   </script>
 }
