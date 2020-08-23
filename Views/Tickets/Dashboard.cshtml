@@ -41,7 +41,7 @@
             <div class="col-12 col-lg-6 align-self-center">
               <div class="row justify-content-center">
                 <div class="col-4"><h3>Assigned to:</h3></div>
-                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                @if (ticketHelper.CanEditTicket(Model.Id))
                 {
                   <div class="col-2 align-self-center">
                     <a class="model_img img-responsive" data-toggle="modal" data-target="#responsive-modal"><i class="ti-pencil-alt"></i></a>
@@ -66,7 +66,7 @@
                   }
                   else
                   {
-                    if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                    if (ticketHelper.CanEditTicket(@Model.Id))
                     {
                       <button class="btn btn-sm btn-rounded btn-info model_img img-responsive" data-toggle="modal" data-target="#responsive-modal">Assign Developer</button>
                     }
@@ -92,7 +92,7 @@
               <!-- Ticket Title -->
               <div class="form-group">
                 <fieldset disabled>
-                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  @if (ticketHelper.CanEditTicket(Model.Id))
                   {
                     <div class="row">
                       <div class="col-1 ml-2">
@@ -113,7 +113,7 @@
               <!-- Ticket Description -->
               <div class="form-group">
                 <fieldset disabled>
-                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  @if (ticketHelper.CanEditTicket(Model.Id))
                   {
                     <div class="row">
                       <div class="col-1 ml-2">
@@ -136,7 +136,7 @@
               <!-- Ticket Priority -->
               <div class="form-group">
                 <fieldset disabled>
-                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  @if (ticketHelper.CanEditTicket(Model.Id))
                   {
                     <div class="row">
                       <div class="col-1 ml-2">
@@ -157,7 +157,7 @@
               <!-- Ticket Status -->
               <div class="form-group">
                 <fieldset disabled>
-                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  @if (ticketHelper.CanEditTicket(Model.Id))
                   {
                     <div class="row">
                       <div class="col-1 ml-2">
@@ -179,7 +179,7 @@
               <!-- Ticket Type -->
               <div class="form-group">
                 <fieldset disabled>
-                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                  @if (ticketHelper.CanEditTicket(Model.Id))
                   {
                     <div class="row">
                       <div class="col-1 ml-2">
@@ -207,6 +207,7 @@
       </div>
     </div>
   </div>
+  </div>
 
   <div class="row">
     <!-- Comments column -->
@@ -219,7 +220,10 @@
               <h6 class="card-subtitle text-white m-0 op-5">Comments on @Model.Project.Name @Model.Title Issue (newest at top)</h6>
             </div>
             <div class="col-2 justify-self-end align-self-center">
-              <button class="btn btn-circle btn-danger model_img img-responsive" data-toggle="modal" data-target="#add-comment"><i class="ti-plus"></i></button>
+              @if (ticketHelper.CanMakeComment(Model.Id))
+              {
+                <button class="btn btn-circle btn-danger model_img img-responsive" data-toggle="modal" data-target="#add-comment"><i class="ti-plus"></i></button>
+              }
             </div>
 
           </div>
@@ -259,7 +263,11 @@
               <h6 class="card-subtitle text-white m-0 op-5">Attachments for @Model.Project.Name @Model.Title Issue</h6>
             </div>
             <div class="col-2 justify-self-end align-self-center">
-              <button class="btn btn-circle btn-danger model_img img-responsive" data-toggle="modal" data-target="#add-attachment"><i class="ti-plus"></i></button>
+              <!-- rules for who can add an attachment are the same for who can add a comment -->
+              @if (ticketHelper.CanMakeComment(Model.Id))
+              {
+                <button class="btn btn-circle btn-danger model_img img-responsive" data-toggle="modal" data-target="#add-attachment"><i class="ti-plus"></i></button>
+              }
             </div>
           </div>
         </div>
@@ -307,294 +315,363 @@
     </div>
   </div>
 
+  <div class="row align-content-around">
+    <!-- Notifications column -->
+    <div class="col-12 col-lg-6">
+      <div class="card rounded">
+        <div class="card-body bg-info rounded-top">
+          <div class="row">
+            <div class="col-10">
+              <h4 class="text-white card-title">Notifications</h4>
+              <h6 class="card-subtitle text-white m-0 op-5">Notifications on @Model.Project.Name @Model.Title Issue (newest at top)</h6>
+            </div>
+            <div class="col-2 justify-self-end align-self-center">
+            </div>
 
-
-  <!-- ********************************************************* -->
-  <!--                       Modals -->
-  <!-- ********************************************************* -->
-  <!-- Assign Developer Modal -->
-  <div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        @using (Html.BeginForm("AssignDeveloper", "Tickets", new { ticketId = Model.Id }))
-        {
-          @Html.AntiForgeryToken()
-
-          <div class="modal-header">
-            <h4 class="modal-title">Assign Developer</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           </div>
-
-          <div class="modal-body">
-            <div class="form-group mb-5">
-              @{
-                var developers = new SelectList(projectHelper.ListUsersOnProjectInRole(Model.Projectid, "Developer"), "Id", "Email");
+        </div>
+        <div class="card-body">
+          <div id="notifications-scroll">
+            <div class="comment-widgets m-b-20">
+              <!-- Comments -->
+              @foreach (var notification in Model.TicketNotifications.OrderByDescending(b => b.Created).ToList())
+              {
+                <div class="d-flex flex-row comment-row">
+                  <div class="p-2"><span class="round"><img src="@notification.User.AvatarPath" alt="user" width="50"></span></div>
+                  <div class="comment-text w-100">
+                    <h5>@notification.User.FullName</h5>
+                    <div class="comment-footer">
+                      <span class="date">@notification.Created.ToString("dd MMM yyyy")</span>
+                    </div>
+                    <p class="m-b-5 m-t-10">@notification.Subject</p>
+                  </div>
+                </div>
               }
-              @Html.Label("Name", htmlAttributes: new { @class = "control-label col-md-2" })
-              @Html.DropDownList("DeveloperId", developers, new { @class = "custom-select pull-right form-control" })
             </div>
-
           </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
-          </div>
-        }
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- Edit Title Modal -->
-  <div id="edit-title" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        @using (Html.BeginForm("UpdateTicketTitle", "Tickets", new { ticketId = Model.Id }))
-        {
-          @Html.AntiForgeryToken()
-
-          <div class="modal-header">
-            <h4 class="modal-title">Edit Ticket Title</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          </div>
-
-          <div class="modal-body">
-            <div class="form-group">
-              <label class="control-label">Ticket Title</label>
-              @Html.Editor("TicketTitle", new { htmlAttributes = new { @class = "form-control", value = "@Model.Title" } })
-              <small class="form-control-feedback"> Enter the ticket title </small>
+    <!-- Histories column -->
+    <div class="col-12 col-lg-6">
+      <div class="card rounded">
+        <div class="card-body bg-info rounded-top">
+          <div class="row">
+            <div class="col-10">
+              <h4 class="text-white card-title">History</h4>
+              <h6 class="card-subtitle text-white m-0 op-5">History of @Model.Project.Name @Model.Title Issue (newest at top)</h6>
+            </div>
+            <div class="col-2 justify-self-end align-self-center">
             </div>
           </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+        </div>
+        <div class="card-body">
+          <div id="histories-scroll">
+            </div>
           </div>
-
-        }
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Edit Description Modal -->
-  <div id="edit-description" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        @using (Html.BeginForm("UpdateTicketDescription", "Tickets", new { ticketId = Model.Id }))
-        {
-          @Html.AntiForgeryToken()
 
-          <div class="modal-header">
-            <h4 class="modal-title">Edit Ticket Description</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <!-- ********************************************************* -->
+      <!--                       Modals -->
+      <!-- ********************************************************* -->
+      <!-- Assign Developer Modal -->
+      <div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            @using (Html.BeginForm("AssignDeveloper", "Tickets", new { ticketId = Model.Id }))
+            {
+              @Html.AntiForgeryToken()
+
+              <div class="modal-header">
+                <h4 class="modal-title">Assign Developer</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
+
+              <div class="modal-body">
+                <div class="form-group mb-5">
+                  @{
+                    var developers = new SelectList
+                    (
+                      projectHelper.ListUsersOnProjectInRole(Model.Projectid, "Developer"),
+                      "Id",
+                      "Email"
+                    );
+                  }
+                  @Html.Label("Name", htmlAttributes: new { @class = "control-label col-md-2" })
+                  @Html.DropDownList("DeveloperId", developers, "--default developer--", new { @class = "custom-select pull-right form-control" })
+                </div>
+
+              </div>
+
+              <div class="modal-footer">
+                <!-- Thinking about putting a button to unassign without assignment to new developer -->
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+              </div>
+            }
           </div>
-
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="modal-description-input" class="control-label">Ticket Description</label>
-              <textarea name="TicketDescription" class="form-control" id="modal-description-input" rows="5">@Model.Description</textarea>
-              <small class="form-control-feedback"> Enter the ticket description </small>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
-          </div>
-
-        }
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Ticket Priority Modal -->
-  <div id="edit-priority" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        @using (Html.BeginForm("UpdateTicketPriority", "Tickets", new { ticketId = Model.Id }))
-        {
-          @Html.AntiForgeryToken()
+      <!-- Edit Title Modal -->
+      <div id="edit-title" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            @using (Html.BeginForm("UpdateTicketTitle", "Tickets", new { ticketId = Model.Id }))
+            {
+              @Html.AntiForgeryToken()
 
-          <div class="modal-header">
-            <h4 class="modal-title">Edit Ticket Priority</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          </div>
+              <div class="modal-header">
+                <h4 class="modal-title">Edit Ticket Title</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
 
-          <div class="modal-body">
-            <div class="form-group mb-5">
-              @{
-                var priorities = new SelectList(ticketHelper.ListTicketPriorities(), "Id", "Name");
-              }
-              @Html.Label("Ticket Priority", htmlAttributes: new { @class = "control-label" })
-              @Html.DropDownList("TicketPriorityId", priorities, new { @class = "custom-select pull-right form-control" })
-            </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label class="control-label">Ticket Title</label>
+                  @Html.Editor("TicketTitle", new { htmlAttributes = new { @class = "form-control", value = "@Model.Title" } })
+                  <small class="form-control-feedback"> Enter the ticket title </small>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+              </div>
+
+            }
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
-          </div>
-        }
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Ticket Status Modal -->
-  <div id="edit-status" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        @using (Html.BeginForm("UpdateTicketStatus", "Tickets", new { ticketId = Model.Id }))
-        {
-          @Html.AntiForgeryToken()
+      <!-- Edit Description Modal -->
+      <div id="edit-description" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            @using (Html.BeginForm("UpdateTicketDescription", "Tickets", new { ticketId = Model.Id }))
+            {
+              @Html.AntiForgeryToken()
 
-          <div class="modal-header">
-            <h4 class="modal-title">Edit Ticket Status</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          </div>
+              <div class="modal-header">
+                <h4 class="modal-title">Edit Ticket Description</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
 
-          <div class="modal-body">
-            <div class="form-group mb-5">
-              @{
-                var statuses = new SelectList(ticketHelper.ListTicketStatuses(), "Id", "Name");
-              }
-              @Html.Label("Ticket Status", htmlAttributes: new { @class = "control-label" })
-              @Html.DropDownList("TicketStatusId", statuses, new { @class = "custom-select pull-right form-control" })
-            </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="modal-description-input" class="control-label">Ticket Description</label>
+                  <textarea name="TicketDescription" class="form-control" id="modal-description-input" rows="5">@Model.Description</textarea>
+                  <small class="form-control-feedback"> Enter the ticket description </small>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+              </div>
+
+            }
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
-          </div>
-        }
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Ticket Type Modal -->
-  <div id="edit-type" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        @using (Html.BeginForm("UpdateTicketType", "Tickets", new { ticketId = Model.Id }))
-        {
-          @Html.AntiForgeryToken()
+      <!-- Ticket Priority Modal -->
+      <div id="edit-priority" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            @using (Html.BeginForm("UpdateTicketPriority", "Tickets", new { ticketId = Model.Id }))
+            {
+              @Html.AntiForgeryToken()
 
-          <div class="modal-header">
-            <h4 class="modal-title">Edit Ticket Type</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          </div>
+              <div class="modal-header">
+                <h4 class="modal-title">Edit Ticket Priority</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
 
-          <div class="modal-body">
-            <div class="form-group mb-5">
-              @{
-                var ticketTypes = new SelectList(ticketHelper.ListTicketTypes(), "Id", "Name");
-              }
-              @Html.Label("Ticket Types", htmlAttributes: new { @class = "control-label" })
-              @Html.DropDownList("TicketTypeId", ticketTypes, new { @class = "custom-select pull-right form-control" })
-            </div>
+              <div class="modal-body">
+                <div class="form-group mb-5">
+                  @{
+                    var priorities = new SelectList(ticketHelper.ListTicketPriorities(), "Id", "Name");
+                  }
+                  @Html.Label("Ticket Priority", htmlAttributes: new { @class = "control-label" })
+                  @Html.DropDownList("TicketPriorityId", priorities, new { @class = "custom-select pull-right form-control" })
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+              </div>
+            }
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
-          </div>
-        }
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Add Comment Modal -->
-  <div id="add-comment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        @using (Html.BeginForm("Create", "TicketComments", new { ticketId = Model.Id }))
-        {
-          @Html.AntiForgeryToken()
+      <!-- Ticket Status Modal -->
+      <div id="edit-status" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            @using (Html.BeginForm("UpdateTicketStatus", "Tickets", new { ticketId = Model.Id }))
+            {
+              @Html.AntiForgeryToken()
 
-          <div class="modal-header">
-            <h4 class="modal-title">Add A Comment</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          </div>
+              <div class="modal-header">
+                <h4 class="modal-title">Edit Ticket Status</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
 
-          <div class="modal-body">
-            <div class="form-group mb-5">
-              <label for="modal-add-comment" class="control-label">Comment</label>
-              <textarea name="Comment" class="form-control" id="modal-add-comment" rows="5"></textarea>
-              <small class="form-control-feedback"> Enter a comment </small>
-            </div>
+              <div class="modal-body">
+                <div class="form-group mb-5">
+                  @{
+                    var statuses = new SelectList(ticketHelper.ListTicketStatuses(), "Id", "Name");
+                  }
+                  @Html.Label("Ticket Status", htmlAttributes: new { @class = "control-label" })
+                  @Html.DropDownList("TicketStatusId", statuses, new { @class = "custom-select pull-right form-control" })
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+              </div>
+            }
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
-          </div>
-        }
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Add Attachment Modal -->
-  <div id="add-attachment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        @* @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" })) { }*@
-        @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-          @Html.AntiForgeryToken()
-          @Html.Hidden("TicketId", Model.Id)
+      <!-- Ticket Type Modal -->
+      <div id="edit-type" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            @using (Html.BeginForm("UpdateTicketType", "Tickets", new { ticketId = Model.Id }))
+            {
+              @Html.AntiForgeryToken()
 
-          <div class="modal-header">
-            <h4 class="modal-title">Add An Attachment</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <div class="modal-header">
+                <h4 class="modal-title">Edit Ticket Type</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
+
+              <div class="modal-body">
+                <div class="form-group mb-5">
+                  @{
+                    var ticketTypes = new SelectList(ticketHelper.ListTicketTypes(), "Id", "Name");
+                  }
+                  @Html.Label("Ticket Types", htmlAttributes: new { @class = "control-label" })
+                  @Html.DropDownList("TicketTypeId", ticketTypes, new { @class = "custom-select pull-right form-control" })
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+              </div>
+            }
           </div>
-
-          <div class="modal-body ml-1">
-            <div class="form-group">
-              @*<label class="control-label">Ticket Title</label>
-                @Html.Editor("TicketTitle", new { htmlAttributes = new { @class = "form-control", value = "@Model.Title" } })
-                <small class="form-control-feedback"> Enter the ticket title </small>*@
-
-              @*@Html.Label("File Name", htmlAttributes: new { @class = "control-label" })*@
-              <label class="control-label">File Name</label>
-              @Html.Editor("FileName", new { htmlAttributes = new { @class = "form-control" } })
-              <small class="form-control-feedback"> Enter a name for attachment </small>
-            </div>
-
-
-            <div class="form-group">
-              <label for="modal-add-attachment" class="control-label">Attachment Description</label>
-              <textarea name="AttachmentDescription" class="form-control" id="modal-add-attachment" rows="5"></textarea>
-              <small class="form-control-feedback"> Enter a description of attachment </small>
-            </div>
-
-            <div class="form-group">
-              <div class="form-control-file"><input type="file" name="file" id="modal-attachment-file" /></div>
-
-            </div>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
-          </div>
-        }
+        </div>
       </div>
-    </div>
-  </div>
 
-</div>
+      <!-- Add Comment Modal -->
+      <div id="add-comment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            @using (Html.BeginForm("Create", "TicketComments", new { ticketId = Model.Id }))
+            {
+              @Html.AntiForgeryToken()
 
-@section Scripts {
-  <script src="~/Scripts/jquery.dataTables.min.js"></script>
-  <script>
-    $(document).ready(function () {
+              <div class="modal-header">
+                <h4 class="modal-title">Add A Comment</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
 
-      $('#myTable').DataTable();
-    })
+              <div class="modal-body">
+                <div class="form-group mb-5">
+                  <label for="modal-add-comment" class="control-label">Comment</label>
+                  <textarea name="Comment" class="form-control" id="modal-add-comment" rows="5"></textarea>
+                  <small class="form-control-feedback"> Enter a comment </small>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
 
-    $('#comments-scroll').slimScroll({
-      height: '400px'
-    });
+      <!-- Add Attachment Modal -->
+      <div id="add-attachment" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            @* @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" })) { }*@
+            @using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+              @Html.AntiForgeryToken()
+              @Html.Hidden("TicketId", Model.Id)
 
-    $('#attachments-scroll').slimScroll({
-      height: '400px'
-    });
+              <div class="modal-header">
+                <h4 class="modal-title">Add An Attachment</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              </div>
 
-  </script>
-}
+              <div class="modal-body ml-1">
+                <div class="form-group">
+                  @*<label class="control-label">Ticket Title</label>
+                  @Html.Editor("TicketTitle", new { htmlAttributes = new { @class = "form-control", value = "@Model.Title" } })
+                  <small class="form-control-feedback"> Enter the ticket title </small>*@
+
+                  @*@Html.Label("File Name", htmlAttributes: new { @class = "control-label" })*@
+                  <label class="control-label">File Name</label>
+                  @Html.Editor("FileName", new { htmlAttributes = new { @class = "form-control" } })
+                  <small class="form-control-feedback"> Enter a name for attachment </small>
+                </div>
+
+
+                <div class="form-group">
+                  <label for="modal-add-attachment" class="control-label">Attachment Description</label>
+                  <textarea name="AttachmentDescription" class="form-control" id="modal-add-attachment" rows="5"></textarea>
+                  <small class="form-control-feedback"> Enter a description of attachment </small>
+                </div>
+
+                <div class="form-group">
+                  <div class="form-control-file"><input type="file" name="file" id="modal-attachment-file" /></div>
+
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+    @section Scripts {
+      <script src="~/Scripts/jquery.dataTables.min.js"></script>
+      <script>
+        $(document).ready(function () {
+
+          $('#myTable').DataTable();
+        })
+
+        $('#comments-scroll').slimScroll({
+          height: '400px'
+        });
+
+        $('#attachments-scroll').slimScroll({
+          height: '400px'
+        });
+
+        $('#notifications-scroll').slimScroll({
+          height: '400px'
+        });
+        
+        $('#histories-scroll').slimScroll({
+          height: '400px'
+        });
+
+      </script>
+    }

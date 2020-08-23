@@ -22,6 +22,8 @@ namespace AphidBT.Controllers
         private TicketHelper ticketHelper = new TicketHelper();
         private ProjectHelper projectHelper = new ProjectHelper();
         private UserRolesHelper roleHelper = new UserRolesHelper();
+        private NotificationHelper notificationHelper = new NotificationHelper();
+        private HistoryHelper historyHelper = new HistoryHelper();
 
         // GET: Tickets
         [Authorize]
@@ -88,6 +90,7 @@ namespace AphidBT.Controllers
         public ActionResult Create([Bind(Include = "Id,Projectid,TicketPriorityId,TicketTypeId,Title,Description")] Ticket ticket)
         {
             var userId = User.Identity.GetUserId();
+            
             if (ModelState.IsValid)
             {
                 // Set DeveloperId to null, IsArchived and IsResolved will be false
@@ -100,6 +103,7 @@ namespace AphidBT.Controllers
                 ticket.SubmitterId = userId;
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -169,19 +173,27 @@ namespace AphidBT.Controllers
         //[Authorize(Roles = "Admin")]
         public ActionResult AssignDeveloper(string developerId, int ticketId)
         {
-            var ticket = db.Tickets.Find(ticketId);
+            // TODO: Add call to notificationHelper.ManageNotification()
+            var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
 
-            if(developerId == null)
+            var ticket = db.Tickets.Find(ticketId);
+            if (string.IsNullOrEmpty(developerId))
             {
                 ticket.TicketStatusId = db.TicketStatuses.Where(s => s.Name == "Open").FirstOrDefault().Id;
+                ticket.DeveloperId = null;
             }
             else
             {
                 ticket.TicketStatusId = db.TicketStatuses.Where(s => s.Name == "Assigned").FirstOrDefault().Id;
+                ticket.DeveloperId = developerId;
             }
-
-            ticket.DeveloperId = developerId;
+            
             db.SaveChanges();
+
+            var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
+            notificationHelper.ManageTicketNotifications(oldTicket, newTicket);
+            historyHelper.DeveloperUpdate(oldTicket, newTicket);
+
             return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId});
         }
 
@@ -200,8 +212,12 @@ namespace AphidBT.Controllers
         //[Authorize(Roles = "Admin")]
         public ActionResult UpdateTicketTitle(string ticketTitle, int ticketId)
         {
+            var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
             db.Tickets.Find(ticketId).Title = ticketTitle;
             db.SaveChanges();
+            var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
+            historyHelper.TitleUpdate(oldTicket, newTicket);
+
             return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
         }
 
@@ -210,8 +226,12 @@ namespace AphidBT.Controllers
         //[Authorize(Roles = "Admin")]
         public ActionResult UpdateTicketPriority(int ticketPriorityId, int ticketId)
         {
+            var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
             db.Tickets.Find(ticketId).TicketPriorityId = ticketPriorityId;
             db.SaveChanges();
+            var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
+            historyHelper.PriorityUpdate(oldTicket, newTicket);
+
             return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
         }
 
@@ -220,8 +240,11 @@ namespace AphidBT.Controllers
         //[Authorize(Roles = "Admin")]
         public ActionResult UpdateTicketStatus(int ticketStatusId, int ticketId)
         {
+            var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
             db.Tickets.Find(ticketId).TicketStatusId = ticketStatusId;
             db.SaveChanges();
+            var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
+            historyHelper.StatusUpdate(oldTicket, newTicket);
             return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
         }
 
@@ -230,8 +253,11 @@ namespace AphidBT.Controllers
         //[Authorize(Roles = "Admin")]
         public ActionResult UpdateTicketType(int ticketTypeId, int ticketId)
         {
+            var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
             db.Tickets.Find(ticketId).TicketTypeId = ticketTypeId;
             db.SaveChanges();
+            var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
+            historyHelper.TypeUpdate(oldTicket, newTicket);
             return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
         }
 

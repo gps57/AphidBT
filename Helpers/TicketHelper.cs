@@ -138,34 +138,7 @@ namespace AphidBT.Helpers
             return aCount;
         }
 
-        public void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
-        {
-            // scenario 1: a new assignment (oldTicket.DeveloperId is null, newTicket.DeveloperId is not)
-
-            // these next two scenarios are not technically required according to the SRS
-            // scenario 2: unassignment (oldTicket.DeveloperId is not null, newTicket.DeveloperId is null)
-
-            // scenario 3: reassignment (neither are null, but they are different)
-            // scenario 3 would result in 2 notifications, to new developer, and to old developer.
-
-            // according to the deliverables, all I need to do is scenario 1
-            if (oldTicket.DeveloperId != newTicket.DeveloperId && newTicket.DeveloperId != null)
-            {
-                // create a new TicketNotification record
-                var notification = new TicketNotification()
-                {
-                    UserId = newTicket.DeveloperId,
-                    Created = DateTime.Now,
-                    TicketId = newTicket.Id,
-                    // Jason has a subject in his TicketNotification model
-                    Message = $"Heads up {newTicket.Developer.FirstName}, you have been assigned to TicketId {newTicket.Title}"
-                };
-
-                db.TicketNotifications.Add(notification);
-                db.SaveChanges();
-                // TODO: was not able to keep up.  I'll have to watch the video to see what I missed.
-            }
-        }
+        
 
         public List<Ticket> GetMyTickets()
         {
