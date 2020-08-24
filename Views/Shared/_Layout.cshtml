@@ -428,7 +428,7 @@
               <ul aria-expanded="false" class="collapse">
                 @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                 {
-                  <li><a alt="default" data-toggle="modal" data-target="#responsive-modal" class="model_img img-responsive">Create New</a></li>
+                  <li><a alt="default" data-toggle="modal" data-target="#createproject-modal" class="model_img img-responsive">Create New</a></li>
                 }
                 <li>
                   @Html.ActionLink("List All", "Index", "Projects")
@@ -593,7 +593,7 @@
   <!-- Code for Modal Popups -->
   <!-- ============================================================== -->
   <!-- Create New Project Popup Modal -->
-  <div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div id="createproject-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
       <div class="modal-content">
         @using (Html.BeginForm("Create", "Projects"))
