@@ -83,53 +83,65 @@
             <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
             <li class="nav-item m-l-10"> <a class="nav-link sidebartoggler hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
             <!-- ============================================================== -->
-            <!-- Comment -->
+            <!-- Notifications -->
             <!-- ============================================================== -->
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle text-muted text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="mdi mdi-message"></i>
-                <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                <i class="mdi mdi-message-alert"></i>
+                @{
+                  var notificationHelper = new AphidBT.Helpers.NotificationHelper();
+                  var unreadNotifications = new List<AphidBT.Models.TicketNotification>();
+                  unreadNotifications = notificationHelper.ListUserUnreadNotifications();
+                }
+                @if (unreadNotifications != null)
+                {
+                  <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                }
               </a>
               <div class="dropdown-menu mailbox animated slideInUp">
                 <ul>
-                  <li>
-                    <div class="drop-title">Notifications</div>
-                  </li>
-                  <li>
-                    <div class="message-center">
-                      <!-- Message -->
-                      <a href="#">
-                        <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>
-                        <div class="mail-contnet">
-                          <h5>Launch Admin</h5> <span class="mail-desc">Just see the my new admin!</span> <span class="time">9:30 AM</span>
-                        </div>
-                      </a>
-                      <!-- Message -->
-                      <a href="#">
-                        <div class="btn btn-success btn-circle"><i class="ti-calendar"></i></div>
-                        <div class="mail-contnet">
-                          <h5>Event today</h5> <span class="mail-desc">Just a reminder that you have event</span> <span class="time">9:10 AM</span>
-                        </div>
-                      </a>
-                      <!-- Message -->
-                      <a href="#">
-                        <div class="btn btn-info btn-circle"><i class="ti-settings"></i></div>
-                        <div class="mail-contnet">
-                          <h5>Settings</h5> <span class="mail-desc">You can customize this template as you want</span> <span class="time">9:08 AM</span>
-                        </div>
-                      </a>
-                      <!-- Message -->
-                      <a href="#">
-                        <div class="btn btn-primary btn-circle"><i class="ti-user"></i></div>
-                        <div class="mail-contnet">
-                          <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:02 AM</span>
-                        </div>
-                      </a>
-                    </div>
-                  </li>
-                  <li>
-                    <a class="nav-link text-center" href="javascript:void(0);"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
-                  </li>
+                  @if (unreadNotifications == null)
+                  {
+                    <li>
+                      <div class="drop-title">There are no Unread Notifications</div>
+                    </li>
+                  }
+                  else
+                  {
+                    <li>
+                      <div class="drop-title">Unread Notifications</div>
+                    </li>
+                    <li>
+                      <div class="message-center">
+                        @foreach (var notifies in unreadNotifications)
+                        {
+                          @*<a href="@Url.Action("Manage", "Users", new { userId = item.Id })">*@
+                          @*I need to figure out where to go if they click on this. *@
+                          @*<a href="#">*@
+                          <a alt="default"
+                             data-toggle="modal"
+                             data-target="#notification-modal-@notifies.Id"
+                             class="model_img img-responsive">
+                            <div class="row">
+                              <div col-3>
+                                <div class="btn btn-danger btn-circle mx-2"><i class="fa fa-exclamation"></i></div>
+                              </div>
+                              <div col-9>
+                                <div class="mail-content">
+                                  <h5>@notifies.Subject</h5>
+                                  @*<span class="mail-desc">@notifies.Message</span>*@
+                                  <span class="time">@notifies.Created.ToString("dd MMM yyyy")</span>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        }
+                      </div>
+                    </li>
+                    <li>
+                      <a class="nav-link text-center" href="javascript:void(0);"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
+                    </li>
+                  }
                 </ul>
               </div>
             </li>
@@ -560,7 +572,7 @@
         <div class="row align-content-center">
           <div class="col-2 mr-2">
             <img src="~/Images/aphid-logo_171x40.png" />
-            </div>
+          </div>
           <div class="col-5 pt-2">
             © @DateTime.Now.ToString("yyyy") by Glen P Stewart
           </div>
@@ -610,6 +622,38 @@
       </div>
     </div>
   </div>
+
+  @foreach (var notify in unreadNotifications)
+  {
+    <div id="notification-modal-@notify.Id" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">@notify.Subject</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          </div>
+          <div class="modal-body">
+            <h4>@notify.Created.ToString("dd MMM yyyy")</h4>
+            <p>
+              @notify.Message
+            </p>
+          </div>
+          <div class="modal-footer">
+            @using (Html.BeginForm("SetNotifyIsRead", "Tickets", new { isRead = true }))
+            {
+              @Html.AntiForgeryToken()
+              @Html.Hidden("Id", notify.Id)
+
+              <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-danger waves-effect waves-light">Mark As Read</button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+  }
+
 
   <!-- ============================================================== -->
   <!-- All Jquery -->

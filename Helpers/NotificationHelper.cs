@@ -16,6 +16,7 @@ namespace AphidBT.Helpers
         private ApplicationDbContext db = new ApplicationDbContext();
         private UserRolesHelper roleHelper = new UserRolesHelper();
         private TicketHelper ticketHelper = new TicketHelper();
+        private ProjectHelper projectHelper = new ProjectHelper();
 
         public void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
         {
@@ -108,6 +109,31 @@ namespace AphidBT.Helpers
             {
                 return false;
             }
+        }
+
+        public List<TicketNotification> ListUserUnreadNotifications()
+        {
+            // "my" unread notifications means those that are about tickets that are in projects that I'm assigned to.
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+
+            var myProjects = projectHelper.ListUserProjects(userId);
+            var projectTickets = myProjects.SelectMany(p => p.Tickets).ToList();
+            
+            var unreadNotifications = new List<TicketNotification>();
+
+            foreach(var ticket in projectTickets)
+            {
+                foreach(var notification in db.TicketNotifications.Where(n => n.IsRead == false).ToList())
+                {
+                    if(notification.TicketId == ticket.Id)
+                    {
+                        unreadNotifications.Add(notification);
+                    }
+                }
+            }
+
+            return unreadNotifications;
+
         }
     }
 }

@@ -261,5 +261,15 @@ namespace AphidBT.Controllers
             return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult SetNotifyIsRead(int Id, bool isRead)
+        {
+            db.TicketNotifications.Find(Id).IsRead = isRead;
+            db.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
