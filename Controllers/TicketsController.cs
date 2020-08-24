@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using AphidBT.Helpers;
@@ -171,7 +172,7 @@ namespace AphidBT.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Authorize(Roles = "Admin")]
-        public ActionResult AssignDeveloper(string developerId, int ticketId)
+        public async Task<ActionResult> AssignDeveloper(string developerId, int ticketId)
         {
             // TODO: Add call to notificationHelper.ManageNotification()
             var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);

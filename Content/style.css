@@ -2480,12 +2480,15 @@ ul#themecolors li a.working:before {
 
 .card-outline-info {
     border-color: #1976d2
+    /*border-color: #0c7f40*/
 }
 
-.card-outline-info .card-header {
-    background: #1976d2;
+    .card-outline-info .card-header {
+            background: #1976d2;
     border-color: #1976d2
-}
+/*        background: #0c7f40;
+        border-color: #0c7f40*/
+    }
 
 .card-outline-inverse {
     border-color: #2f3d4a

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net.Mail;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -18,7 +19,7 @@ namespace AphidBT.Helpers
         private TicketHelper ticketHelper = new TicketHelper();
         private ProjectHelper projectHelper = new ProjectHelper();
 
-        public void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
+        public async void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
         {
             // these next two scenarios are not technically required according to the SRS
             // scenario 2: unassignment (oldTicket.DeveloperId is not null, newTicket.DeveloperId is null)
@@ -42,11 +43,11 @@ namespace AphidBT.Helpers
                 };
 
                 db.TicketNotifications.Add(notification);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 // send the notification to the user's email
                 // commented out because I'm getting an error that I think has to do with async and await
-                // SendNotificationEmail(notification);
+                await SendNotificationEmail(notification);
             }
 
             if((oldTicket.DeveloperId != newTicket.DeveloperId) && !string.IsNullOrEmpty(oldTicket.DeveloperId))
@@ -62,19 +63,20 @@ namespace AphidBT.Helpers
                 };
 
                 db.TicketNotifications.Add(notification);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
                 // send the notification to the user's email
                 // commented out because I'm getting an error that I think has to do with async and await
-                // SendNotificationEmail(notification);
+                await SendNotificationEmail(notification);
             }
         }
 
-        private async void SendNotificationEmail(TicketNotification notification)
+        private async Task SendNotificationEmail(TicketNotification notification)
         {
             try
             {
-                var sendTo = notification.User.Email;
+                var user = db.Users.Find(notification.UserId);
+                var sendTo = user.Email;
                 var from = "MyPortfolio<example@email.com>";
 
                 var email = new MailMessage(from, sendTo)

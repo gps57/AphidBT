@@ -424,7 +424,7 @@
             </li>
             <li>
               <a class="has-arrow waves-effect waves-dark"
-                 href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Projects</span></a>
+                 href="#" aria-expanded="false"><i class="mdi mdi-puzzle"></i><span class="hide-menu">Projects</span></a>
               <ul aria-expanded="false" class="collapse">
                 @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                 {
@@ -439,7 +439,7 @@
             <!-- Tickets menu item -->
             <li>
               <a class="has-arrow waves-effect waves-dark"
-                 href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Tickets</span></a>
+                 href="#" aria-expanded="false"><i class="mdi mdi-ticket"></i><span class="hide-menu">Tickets</span></a>
               <ul aria-expanded="false" class="collapse">
                 @if (User.IsInRole("Submitter"))
                 {
@@ -454,7 +454,7 @@
             {
               <li>
                 <a class="has-arrow waves-effect waves-dark"
-                   href="#" aria-expanded="false"><i class="mdi mdi-gauge"></i><span class="hide-menu">Users</span></a>
+                   href="#" aria-expanded="false"><i class="mdi mdi-account"></i><span class="hide-menu">Users</span></a>
                 <ul aria-expanded="false" class="collapse">
                   <li>@Html.ActionLink("List All", "Index", "Users")</li>
                 </ul>
