@@ -1,5 +1,6 @@
 namespace AphidBT.Migrations
 {
+    using AphidBT.Helpers;
     using AphidBT.Models;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
@@ -7,6 +8,7 @@ namespace AphidBT.Migrations
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
+    using System.Web.Configuration;
 
     internal sealed class Configuration : DbMigrationsConfiguration<AphidBT.Models.ApplicationDbContext>
     {
@@ -23,8 +25,9 @@ namespace AphidBT.Migrations
             //  to avoid creating duplicate seed data.
 
             // Create the roles that will be used in AphidBT
-            var roleManager = new RoleManager<IdentityRole>(
-                new RoleStore<IdentityRole>(context));
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+            string demoEmail = "";
+            var demoPassword = WebConfigurationManager.AppSettings["DemoPassword"];
 
             //  Admin role
             if (!context.Roles.Any(r => r.Name == "Admin"))
@@ -54,6 +57,9 @@ namespace AphidBT.Migrations
             var userManager = new UserManager<ApplicationUser>(
                 new UserStore<ApplicationUser>(context));
 
+            SeedHelper seedHelper = new SeedHelper();
+            seedHelper.SeedDemoUsers();
+
             // set myself up as administrator
             if (!context.Users.Any(u => u.Email == "glen@swiftbt.com"))
             {
@@ -63,69 +69,13 @@ namespace AphidBT.Migrations
                     UserName = "glen@swiftbt.com",
                     FirstName = "Glen",
                     LastName = "Stewart"
-                }, "Abc&123!");
+                }, demoPassword);
 
                 // grab the Id that just created by adding the above user
                 var userId = userManager.FindByEmail("glen@swiftbt.com").Id;
 
                 // now that I have created a user I want to assign the person to the specific role
                 userManager.AddToRole(userId, "Admin");
-
-            }
-
-            // set up a "Demo" Project Manager
-            if (!context.Users.Any(u => u.Email == "demo_pm@mailinator.com"))
-            {
-                userManager.Create(new ApplicationUser()
-                {
-                    Email = "demo_pm@mailinator.com",
-                    UserName = "demo_pm@mailinator.com",
-                    FirstName = "Demo",
-                    LastName = "ProjectManager"
-                }, "Abc&123!");
-
-                // grab the Id that just created by adding the above user
-                var userId = userManager.FindByEmail("demo_pm@mailinator.com").Id;
-
-                // now that I have created a user I want to assign the person to the specific role
-                userManager.AddToRole(userId, "Project Manager");
-
-            }
-
-            // set up a "Demo" Developer
-            if (!context.Users.Any(u => u.Email == "demo_dev@mailinator.com"))
-            {
-                userManager.Create(new ApplicationUser()
-                {
-                    Email = "demo_dev@mailinator.com",
-                    UserName = "demo_dev@mailinator.com",
-                    FirstName = "Demo",
-                    LastName = "Developer"
-                }, "Abc&123!");
-
-                // grab the Id that just created by adding the above user
-                var userId = userManager.FindByEmail("demo_dev@mailinator.com").Id;
-
-                // now that I have created a user I want to assign the person to the specific role
-                userManager.AddToRole(userId, "Developer");
-            }
-
-            // set up a "Demo Submitter"
-            if (!context.Users.Any(u => u.Email == "demo_sub@mailinator.com"))
-            {
-                userManager.Create(new ApplicationUser()
-                {
-                    Email = "demo_sub@mailinator.com",
-                    UserName = "demo_sub@mailinator.com",
-                    FirstName = "Demo",
-                    LastName = "Submitter"
-                }, "Abc&123!");
-
-                // grab the Id that just created by adding the above user
-                var userId = userManager.FindByEmail("demo_sub@mailinator.com").Id;
-
-                // now that I have created a user I want to assign the person to the specific role
-                userManager.AddToRole(userId, "Submitter");
             }
 
             // Seed a couple generic users

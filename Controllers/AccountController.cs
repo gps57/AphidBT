@@ -572,15 +572,29 @@ namespace AphidBT.Controllers
             return View();
         }
 
+        // POST: /Account/DemoLogin
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public /*async Task<ActionResult>*/ void DemoLogin(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> DemoLogin(string emailKey)
         {
-            return; /*View(model);*/
-        }
-        
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var email = WebConfigurationManager.AppSettings[emailKey];
+            var password = WebConfigurationManager.AppSettings["DemoPassword"];
 
+            var result = await SignInManager.PasswordSignInAsync(email, password, false, shouldLockout: false);
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    //return RedirectToLocal(returnUrl);
+                    return RedirectToAction("Index", "Home");
+                case SignInStatus.Failure:
+                default:
+                    ModelState.AddModelError("", "Invalid login attempt.");
+                    return View();
+            }
+        }
 
         #region Helpers
         // Used for XSRF protection when adding external logins

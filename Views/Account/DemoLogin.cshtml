@@ -66,7 +66,48 @@
               <img src="~/Images/aphid-icon_40x40-96.png" />
             </div>
           </div>
+        </div>
 
+        <div class="card-body">
+          <!-- Demo Admin Login -->
+          @using (Html.BeginForm("DemoLogin", "Account", FormMethod.Post))
+          {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("emailKey", "AdminDemoEmail")
+            <div class="form-group">
+              <button class="btn btn-info btn-block waves-light" type="submit"><span class="btn-label"><i class="mdi mdi-account-settings-variant"></i></span>Admin Demo</button>
+            </div>
+          }
+
+          <!-- Demo Project Manager Login -->
+          @using (Html.BeginForm("DemoLogin", "Account", FormMethod.Post))
+          {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("emailKey", "ProjectManagerDemoEmail")
+            <div class="form-group">
+              <button class="btn btn-danger btn-block waves-effect waves-light" type="submit"><span class="btn-label"><i class="mdi mdi-account-check"></i></span>Project Manager Demo</button>
+            </div>
+          }
+
+          <!-- Demo Developer Login -->
+          @using (Html.BeginForm("DemoLogin", "Account", FormMethod.Post))
+          {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("emailKey", "DeveloperDemoEmail")
+            <div class="form-group">
+              <button class="btn btn-dark btn-block waves-effect waves-light" type="submit"><span class="btn-label"><i class="mdi mdi-account-edit"></i></span>Developer Demo</button>
+            </div>
+          }
+
+          <!-- Demo Submitter Login -->
+          @using (Html.BeginForm("DemoLogin", "Account", FormMethod.Post))
+          {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("emailKey", "SubmitterDemoEmail")
+            <div class="form-group">
+              <button class="btn btn-success btn-block waves-effect waves-light" type="submit"><span class="btn-label"><i class="mdi mdi-account-plus"></i></span>Submitter Demo</button>
+            </div>
+          }
 
         </div>
       </div>
