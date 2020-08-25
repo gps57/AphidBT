@@ -19,7 +19,7 @@ namespace AphidBT.Helpers
         private TicketHelper ticketHelper = new TicketHelper();
         private ProjectHelper projectHelper = new ProjectHelper();
 
-        public async void ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
+        public async Task ManageTicketNotifications(Ticket oldTicket, Ticket newTicket)
         {
             // these next two scenarios are not technically required according to the SRS
             // scenario 2: unassignment (oldTicket.DeveloperId is not null, newTicket.DeveloperId is null)
@@ -39,7 +39,7 @@ namespace AphidBT.Helpers
                     TicketId = newTicket.Id,
                     // Jason has a subject in his TicketNotification model
                     Subject = "Ticket Assignment",
-                    Message = $"{newTicket.Developer.FirstName} has been assigned to Ticket Id {newTicket.Id},'{newTicket.Title}' on Project '{newTicket.Project.Name}'"
+                    Message = $"{newTicket.Developer.FirstName} has been assigned to Ticket Id {newTicket.Id},'{newTicket.Title}' on Project '{newTicket.Project.Name}.'"
                 };
 
                 db.TicketNotifications.Add(notification);
@@ -59,7 +59,7 @@ namespace AphidBT.Helpers
                     Created = DateTime.Now,
                     TicketId = oldTicket.Id,
                     Subject = "Ticket Un-Assignment",
-                    Message = $"{oldTicket.Developer.FirstName} has been un-assigned from Ticket Id {oldTicket.Id},'{newTicket.Title}' on Project '{oldTicket.Project.Name}'"
+                    Message = $"{oldTicket.Developer.FirstName} has been un-assigned from Ticket Id {oldTicket.Id},'{newTicket.Title}.'"
                 };
 
                 db.TicketNotifications.Add(notification);

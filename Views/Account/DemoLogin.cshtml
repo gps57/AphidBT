@@ -1,8 +1,12 @@
-﻿@model AphidBT.Models.ForgotPasswordViewModel
+﻿@using AphidBT.Models
+
+@model LoginViewModel
+
 @{
   Layout = null;
-  ViewBag.Title = "Forgot your password?";
+  ViewBag.Title = "Log in";
 }
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,7 +51,6 @@
     </svg>
   </div>
 
-
   <!-- ============================================================== -->
   <!-- Main wrapper with content
   <!-- ============================================================== -->
@@ -55,35 +58,16 @@
     <div class="login-register" style="background-image: url(/Images/login-register.jpg);">
       <div class="login-box card">
         <div class="card-body">
-          <section id="forgotPwForm">
-            @using (Html.BeginForm("ForgotPassword", "Account", FormMethod.Post, new { @class = "form-horizontal form-material", role = "form" }))
-            {
-              @Html.AntiForgeryToken()
-            <div class="row justify-content-between align-content-center">
-              <div class="col-10 align-self-center">
-                <h3 class="box-title">Password Recovery</h3>
-              </div>
-              <div class="col-2 m-b-20">
-                <img src="~/Images/aphid-icon_40x40-96.png" />
-              </div>
+          <div class="row justify-content-between align-content-center">
+            <div class="col-5 align-self-center">
+              <h3 class="box-title">Demo Login</h3>
             </div>
-              @Html.ValidationSummary("", new { @class = "text-danger" })
+            <div class="col-2 m-b-20">
+              <img src="~/Images/aphid-icon_40x40-96.png" />
+            </div>
+          </div>
 
-          <div class="form-group">
-            <div class="col-xs-12">
-              <input class="form-control" type="text" placeholder="Enter Email Address" name="Email" />
-              @*@Html.LabelFor(m => m.Email, new { @class = "col-12 control-label" })*@
-              @*@Html.TextBoxFor(m => m.Email, new { @class = "form-control" })*@
-              <small class="form-control-feedback"> An password recovery link will be sent to you. </small>
-            </div>
-            </div>
-            <div class="form-group">
-              <div class="col-md-offset-2 col-md-10">
-                <input type="submit" class="btn btn-info" value="Send Link" />
-              </div>
-            </div>
-            }
-</section>
+
         </div>
       </div>
     </div>
@@ -109,3 +93,4 @@
 </body>
 
 </html>
+

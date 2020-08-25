@@ -488,6 +488,7 @@
     <Content Include="Content\simple-line-icons.css" />
     <Content Include="Content\spinners.css" />
     <Content Include="Content\style.css" />
+    <Content Include="Content\sweetalert.css" />
     <Content Include="Content\themify-icons.css" />
     <Content Include="Content\weather-icons.min.css" />
     <Content Include="favicon.ico" />
@@ -542,6 +543,7 @@
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\sidebarmenu.js" />
     <Content Include="Scripts\sticky-kit.min.js" />
+    <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Scripts\waves.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -650,6 +652,7 @@
     <None Include="packages.config" />
     <Content Include="Views\Users\Manage.cshtml" />
     <None Include="Properties\PublishProfiles\AphidBT - Web Deploy.pubxml" />
+    <Content Include="Views\Account\DemoLogin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008032156038_migration-03aug2020.resx">

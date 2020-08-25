@@ -563,6 +563,25 @@ namespace AphidBT.Controllers
             return View();
         }
 
+        // GET: /Account/ForgotPassword
+        [AllowAnonymous]
+        public ActionResult DemoLogin()
+        {
+            //var demoLoginVM = new DemoLoginVM();
+
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public /*async Task<ActionResult>*/ void DemoLogin(LoginViewModel model, string returnUrl)
+        {
+            return; /*View(model);*/
+        }
+        
+
+
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";

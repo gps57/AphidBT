@@ -94,7 +94,6 @@ namespace AphidBT.Helpers
             return project.Users.Contains(user);
         }
 
-        // OPTIONAL: List users on a project that occupy a specific role
 
         // Filters the list of users on a project by role - use to populate ticket assignment dropdown
         public List<ApplicationUser> ListUsersOnProjectInRole(int projectId, string roleName)
@@ -118,13 +117,9 @@ namespace AphidBT.Helpers
             ApplicationUser user = db.Users.Find(userId);
             var projects = user.Projects.ToList();
             return projects;
-
         }
 
         // OPTIONAL: List users not on a project in a specific role
         // OPTIONAL: Filter for Project Manager role - if you code for only one allowed
-
-
-
     }
 }

@@ -192,7 +192,7 @@ namespace AphidBT.Controllers
             db.SaveChanges();
 
             var newTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
-            notificationHelper.ManageTicketNotifications(oldTicket, newTicket);
+            await notificationHelper.ManageTicketNotifications(oldTicket, newTicket);
             historyHelper.DeveloperUpdate(oldTicket, newTicket);
 
             return RedirectToAction("Dashboard", "Tickets", new { Id = ticketId});

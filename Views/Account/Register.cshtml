@@ -59,7 +59,7 @@
       <div class="login-box card">
         <div class="card-body">
 
-          @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal form-material", role = "form", id = "loginform", enctype = "multipart/form-data" }))
+          @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal form-material", role = "form", id = "registerform", enctype = "multipart/form-data" }))
           {
             @Html.AntiForgeryToken()
 
