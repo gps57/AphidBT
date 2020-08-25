@@ -62,6 +62,7 @@
           @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal form-material", role = "form", id = "loginform", enctype = "multipart/form-data" }))
           {
             @Html.AntiForgeryToken()
+
             <div class="row justify-content-between align-content-center">
               <div class="col-5 align-self-center">
                 <h3 class="box-title">Sign In</h3>
@@ -112,7 +113,7 @@
             <!-- Password confirm entry field -->
             <div class="form-group">
               <div class="col-xs-12">
-                <input class="form-control" type="password" placeholder="Confirm Password" name="PasswordConfirm" />
+                <input class="form-control" type="password" placeholder="Confirm Password" name="ConfirmPassword" />
               </div>
             </div>
 

@@ -644,6 +644,9 @@
     <Content Include="Content\fonts\themify.woff" />
     <Content Include="fonts\dropify.woff" />
     <Content Include="fonts\dropify.ttf" />
+    <Content Include="fonts\materialdesignicons-webfont.woff" />
+    <Content Include="fonts\materialdesignicons-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
     <None Include="packages.config" />
     <Content Include="Views\Users\Manage.cshtml" />
     <None Include="Properties\PublishProfiles\AphidBT - Web Deploy.pubxml" />
