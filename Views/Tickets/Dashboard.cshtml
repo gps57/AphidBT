@@ -2,10 +2,10 @@
 @model AphidBT.Models.Ticket
 
 @{
-  ViewBag.Title = "Ticket Dashboard";
-  UserHelper userHelper = new UserHelper();
-  ProjectHelper projectHelper = new ProjectHelper();
-  TicketHelper ticketHelper = new TicketHelper();
+    ViewBag.Title = "Ticket Dashboard";
+    UserHelper userHelper = new UserHelper();
+    ProjectHelper projectHelper = new ProjectHelper();
+    TicketHelper ticketHelper = new TicketHelper();
 }
 
 
@@ -367,7 +367,33 @@
         </div>
         <div class="card-body">
           <div id="histories-scroll">
-            </div>
+            <ul class="timeline">
+              @{ var loop = 1; }
+              @foreach (var history in Model.TicketHistories.OrderByDescending(b => b.ChangedOn).ToList())
+              {
+                var liString = "";
+                if (loop % 2 != 0)
+                {
+                  liString = "timeline-inverted";
+                }
+                <li class=@liString>
+                    <div class="timeline-badge success"><img class="img-responsive" alt="user" src="@history.User.AvatarPath"> </div>
+                    <div class="timeline-panel">
+                      <div class="timeline-heading">
+                        <h4 class="timeline-title">@history.Property</h4>
+                        <p><small class="text-muted"><i class="fa fa-clock-o"></i> @history.ChangedOn</small> </p>
+                      </div>
+                      <div class="timeline-body">
+                        <p>Old Value is: @history.OldValue</p>
+                        <p>New Value is: @history.NewValue</p>
+                      </div>
+                    </div>
+                  </li>
+                  loop++;
+                  }
+                </ul>
+            <!-- Histories Content here -->
+          </div>
           </div>
           </div>
         </div>

@@ -264,7 +264,7 @@
                   }
 
                   <div class="mail-content">
-                    <h5>@item.FullName</h5> <span class="mail-desc">@item.Email</span>
+                    <h5>@item.FullName (@userRolesHelper.ListUserRoles(item.Id).FirstOrDefault())</h5> <span class="mail-desc">@item.Email</span>
                   </div>
                 </a>
               }

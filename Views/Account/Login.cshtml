@@ -76,7 +76,7 @@
                 <div class="col-xs-12">
                   <input class="form-control" type="text" placeholder="Username" name="email" />
                   @*@Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Username" })
-          @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })*@
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })*@
                 </div>
               </div>
 
@@ -84,7 +84,7 @@
                 <div class="col-xs-12">
                   <input class="form-control" type="password" placeholder="Password" name="password" />
                   @*@Html.PasswordFor(m => m.Email, new { @class = "form-control", placeholder = "Password" })
-          @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })*@
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })*@
                 </div>
               </div>
 
@@ -103,7 +103,7 @@
                   <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Log In</button>
                 </div>
               </div>
-
+              <hr />
               <div class="form-group m-b-0">
                 <div class="col-sm-12 text-center mb-1">
                   <div>
@@ -121,9 +121,19 @@
                   </div>
                 </div>
               </div>
-
             }
           </section>
+          <hr />
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
+              <h5>Authenticate with a social account?</h5>
+              <div class="social">
+                <section id="socialLoginForm">
+                  @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                </section>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -26,39 +26,18 @@ namespace AphidBT.Migrations
 
             // Create the roles that will be used in AphidBT
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
-            string demoEmail = "";
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             var demoPassword = WebConfigurationManager.AppSettings["DemoPassword"];
-
-            //  Admin role
-            if (!context.Roles.Any(r => r.Name == "Admin"))
-            {
-                roleManager.Create(new IdentityRole { Name = "Admin" });
-            }
-
-            //  Project Manager role
-            if (!context.Roles.Any(r => r.Name == "Project Manager"))
-            {
-                roleManager.Create(new IdentityRole { Name = "Project Manager" });
-            }
-
-            // Developer role
-            if (!context.Roles.Any(r => r.Name == "Developer"))
-            {
-                roleManager.Create(new IdentityRole { Name = "Developer" });
-            }
-
-            // Submitter role
-            if (!context.Roles.Any(r => r.Name == "Submitter"))
-            {
-                roleManager.Create(new IdentityRole { Name = "Submitter" });
-            }
-
-            // Seed some users with roles
-            var userManager = new UserManager<ApplicationUser>(
-                new UserStore<ApplicationUser>(context));
-
-            SeedHelper seedHelper = new SeedHelper();
-            seedHelper.SeedDemoUsers();
+            
+            SeedHelper seedHelper = new SeedHelper(context);
+            seedHelper.SeedRoles(roleManager);
+            seedHelper.SeedDemoUsers(userManager);
+            seedHelper.SeedRamdomUsers(userManager);
+            seedHelper.SeedTicketTypes();
+            seedHelper.SeedTicketPriorities();
+            seedHelper.SeedTicketStatuses();
+            seedHelper.SeedDemoProjects();
+            seedHelper.SeedDemoTickets();
 
             // set myself up as administrator
             if (!context.Users.Any(u => u.Email == "glen@swiftbt.com"))
@@ -76,93 +55,9 @@ namespace AphidBT.Migrations
 
                 // now that I have created a user I want to assign the person to the specific role
                 userManager.AddToRole(userId, "Admin");
+
+                context.SaveChanges();
             }
-
-            // Seed a couple generic users
-            if (!context.Users.Any(u => u.Email == "user1@mailinator.com"))
-            {
-                userManager.Create(new ApplicationUser()
-                {
-                    Email = "user1@mailinator.com",
-                    UserName = "user1@mailinator.com",
-                    FirstName = "User",
-                    LastName = "One"
-                }, "Abc&123!");
-
-                // grab the Id that just created by adding the above user
-                var userId = userManager.FindByEmail("user1@mailinator.com").Id;
-
-                // now that I have created a user I want to assign the person to the specific role
-                userManager.AddToRole(userId, "Submitter");
-            }
-
-            if (!context.Users.Any(u => u.Email == "user2@mailinator.com"))
-            {
-                userManager.Create(new ApplicationUser()
-                {
-                    Email = "user2@mailinator.com",
-                    UserName = "user2@mailinator.com",
-                    FirstName = "User",
-                    LastName = "Two"
-                }, "Abc&123!");
-
-                // grab the Id that just created by adding the above user
-                var userId = userManager.FindByEmail("user2@mailinator.com").Id;
-
-                // now that I have created a user I want to assign the person to the specific role
-                userManager.AddToRole(userId, "Submitter");
-            }
-
-
-            context.SaveChanges();
-
-            //seeding some ticket stuff
-            #region TicketType Seed
-            context.TicketTypes.AddOrUpdate(
-                tt => tt.Name,
-                new TicketType() { Name = "Software" },
-                new TicketType() { Name = "Hardware" },
-                new TicketType() { Name = "UI" },
-                new TicketType() { Name = "Defect" },
-                new TicketType() { Name = "Feature Request" },
-                new TicketType() { Name = "Other" }
-                );
-            #endregion
-
-            #region TicketPriority Seed
-            context.TicketPriorities.AddOrUpdate(
-                pp => pp.Name,
-                new TicketPriority() { Name = "Low" },
-                new TicketPriority() { Name = "Medium" },
-                new TicketPriority() { Name = "High" },
-                new TicketPriority() { Name = "On Hold" }
-                );
-            #endregion
-
-            #region TicketStatus Seed
-            context.TicketStatuses.AddOrUpdate(
-                ts => ts.Name,
-                new TicketStatus() { Name = "Open" },
-                new TicketStatus() { Name = "Assigned" },
-                new TicketStatus() { Name = "Resolved" },
-                new TicketStatus() { Name = "Reopened" },
-                new TicketStatus() { Name = "Archived" }
-                );
-            #endregion
-
-            #region Project Seed
-            context.Projects.AddOrUpdate(
-                p => p.Name,
-                new Project() { Name = "Seed 1", Created = DateTime.Now.AddDays(-60), IsArchived = true },
-                new Project() { Name = "Seed 2", Created = DateTime.Now.AddDays(-45) },
-                new Project() { Name = "Seed 3", Created = DateTime.Now.AddDays(-30) },
-                new Project() { Name = "Seed 4", Created = DateTime.Now.AddDays(-15) },
-                new Project() { Name = "Seed 5", Created = DateTime.Now.AddDays(-7) }
-                );
-            #endregion
-
-            context.SaveChanges();
-
         }
     }
 }

@@ -11,6 +11,19 @@ namespace AphidBT.Models
         public string Email { get; set; }
     }
 
+    public class ThirdPartyLoginConfirmationVM: ExternalLoginConfirmationViewModel
+    {
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        public HttpPostedFileBase Avatar { get; set; }
+    }
+
     public class ExternalLoginListViewModel
     {
         public string ReturnUrl { get; set; }

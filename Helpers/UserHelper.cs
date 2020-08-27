@@ -1,4 +1,5 @@
 ﻿using AphidBT.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,26 @@ namespace AphidBT.Helpers
             var firstName = user.FirstName;
             var lastName = user.LastName;
             return firstName + " " + lastName;
+        }
+
+        public string GetFullName()
+        {
+            var user = db.Users.Find(HttpContext.Current.User.Identity.GetUserId());
+            var firstName = user.FirstName;
+            var lastName = user.LastName;
+            return firstName + " " + lastName;
+        }
+
+        public string GetAvatarPath()
+        {
+            var user = db.Users.Find(HttpContext.Current.User.Identity.GetUserId());
+            return user.AvatarPath;
+        }
+
+        public string GetAvatarPath(string userId)
+        {
+            var user = db.Users.Find(userId);
+            return user.AvatarPath;
         }
 
         public string LastNameFirst(string userId)

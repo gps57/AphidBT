@@ -2057,7 +2057,8 @@ form label {
 .page-titles {
     background: #ffffff;
     margin: 0 0px 30px;
-    padding: 15px 10px;
+    /*padding: 15px 10px;*/
+    padding: 10px 10px;
     position: relative;
     z-index: 10;
     -webkit-box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
@@ -9475,3 +9476,4 @@ input[type=checkbox]:not(:disabled).tabbed:focus~.lever:after, input[type=checkb
     height: 30px;
     width: 30px;
 }
+
