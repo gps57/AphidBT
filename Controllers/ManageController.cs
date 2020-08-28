@@ -253,7 +253,12 @@ namespace AphidBT.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model.ChangePasswordVM);
+                if(model.ChangePasswordVM.NewPassword != model.ChangePasswordVM.ConfirmPassword)
+                {
+                    ModelState.AddModelError("Password", "Your Password and Confirm Password do not match");
+                }
+                return View("Index", model.ChangePasswordVM);
+                //return RedirectToAction("Index");
             }
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.ChangePasswordVM.OldPassword, model.ChangePasswordVM.NewPassword);
             if (result.Succeeded)
@@ -266,7 +271,9 @@ namespace AphidBT.Controllers
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }
             AddErrors(result);
-            return View(model);
+
+            return RedirectToAction("Index");
+            //return View(model);
         }
 
         //

@@ -7,7 +7,7 @@
   ViewBag.Title = "Manage";
 }
 
-<p class="text-success">@ViewBag.StatusMessage</p>
+
 
 <div class="card card-outline-info">
   <div class="card-header">
@@ -15,23 +15,25 @@
   </div>
   <div class="card-body px-4">
     <!-- Change Profile -->
-    <div class="card">
-      @using (Html.BeginForm("ChangeProfile", "Manage", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", role = "form" }))
-      {
-        @Html.AntiForgeryToken()
-        <div class="card-body bg-light-extra">
-          <h3>Manage Your Profile</h3>
-        </div>
-        <div class="card-body">
-          @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-6">
+        <div class="card">
+          <!-- Change Profile Form -->
+          @using (Html.BeginForm("ChangeProfile", "Manage", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", role = "form" }))
+          {
+            @Html.AntiForgeryToken()
 
-          <div class="row">
-            <!-- First name entry field -->
-            <div class="col-6">
+            <div class="card-body bg-light-extra">
+              <h3>Manage Your Profile</h3>
+            </div>
+            <div class="card-body">
+              @Html.ValidationSummary("", new { @class = "text-danger" })
+              <!-- First name entry field -->
+
               <div class="form-group">
                 @Html.LabelFor(m => m.ExtChangeProfileVM.FirstName, new { @class = "col-12 control-label" })
                 <div class="col-12">
-                  @Html.TextBoxFor(m => m.ExtChangeProfileVM.FirstName, new { @class = "col-12 form-control" })
+                  @Html.TextBoxFor(m => m.ExtChangeProfileVM.FirstName, new { @class = "form-control" })
                 </div>
               </div>
 
@@ -52,143 +54,153 @@
             </div>
 
             <!-- Optional Avatar field -->
-            <div class="col-6">
-              <div class="form-group mr-3">
-                <label class="control-label col-12">Personal Avatar</label>
-                <input type="file" id="input-file-now" name="Avatar" class="dropify form-control col-12" data-default-file="@Model.ExtChangeProfileVM.AvatarPath" />
-                <p><small class="form-control-feedback"> Click or drag to change Avatar image </small></p>
+        <div class="row justify-content-around">
+          <div class="col-11">
+            <div class="form-group mr-3">
+              <label class="control-label col-12">Personal Avatar</label>
+              <input type="file" id="input-file-now" name="Avatar" class="dropify form-control col-10" data-default-file="@Model.ExtChangeProfileVM.AvatarPath" />
+              <p><small class="form-control-feedback"> Click or drag to change Avatar image </small></p>
+            </div>
+          </div>
+        </div>
+
+            <!-- Submit control-->
+            <div class="form-group">
+              <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Change profile" class="btn btn-danger" />
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Submit control-->
-        <div class="form-group">
-          <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Change profile" class="btn btn-info" />
-          </div>
-        </div>
-      }
-    </div>
-    <!-- Change Password -->
-    <div class="card">
-      @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-      {
-        @Html.AntiForgeryToken()
-        <div class="card-body bg-light-extra">
-          <h3>Manage Your Password</h3>
-        </div>
-        <div class="card-body">
-          @Html.ValidationSummary("", new { @class = "text-danger" })
-          <div class="form-group">
-            @Html.LabelFor(m => m.ChangePasswordVM.OldPassword, new { @class = "col-md-10 control-label" })
-            <div class="col-md-10">
-              @Html.PasswordFor(m => m.ChangePasswordVM.OldPassword, new { @class = "form-control" })
-            </div>
-          </div>
-          <div class="form-group">
-            @Html.LabelFor(m => m.ChangePasswordVM.NewPassword, new { @class = "col-md-10 control-label" })
-            <div class="col-md-10">
-              @Html.PasswordFor(m => m.ChangePasswordVM.NewPassword, new { @class = "form-control" })
-            </div>
-          </div>
-          <div class="form-group">
-            @Html.LabelFor(m => m.ChangePasswordVM.ConfirmPassword, new { @class = "col-md-10 control-label" })
-            <div class="col-md-10">
-              @Html.PasswordFor(m => m.ChangePasswordVM.ConfirmPassword, new { @class = "form-control" })
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-              <input type="submit" value="Change password" class="btn btn-info" />
-            </div>
-          </div>
-        </div>
-      }
-    </div>
-    <!-- Manage External Logins -->
-  </div>
-  <div class="card-footer">
-  <div class="row justify-content-center">
-    <div class="col-2">
-      @Html.ActionLink("Close", "Index", "Home", null, new { @class = "btn btn-block btn-danger" })
-    </div>
-  </div>
-    </div>
-</div>
-
-<!--<div>-->
-@*<dl class="dl-horizontal">
-
-  <dt>External Logins:</dt>
-  <dd>
-    @Model.IndexVM.Logins.Count [
-    @Html.ActionLink("Manage", "ManageLogins") ]
-  </dd>*@
-@*
-  Phone Numbers can used as a second factor of verification in a two-factor authentication system.
-
-   See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-      for details on setting up this ASP.NET application to support two-factor authentication using SMS.
-
-   Uncomment the following block after you have set up two-factor authentication
-*@
-@*
-  <dt>Phone Number:</dt>
-  <dd>
-      @(Model.PhoneNumber ?? "None")
-      @if (Model.PhoneNumber != null)
-      {
-          <br />
-          <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
-          using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-          {
-              @Html.AntiForgeryToken()
-              <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
           }
-      }
-      else
-      {
-          <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
-      }
-  </dd>
-*@
-@*<dt>Two-Factor Authentication:</dt>
-  <dd>
-    <p>
-      There are no two-factor authentication providers configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-      for details on setting up this ASP.NET application to support two-factor authentication.
-    </p>*@
-@*@if (Model.TwoFactor)
-  {
-      using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-      {
-          @Html.AntiForgeryToken()
-          <text>Enabled
-          <input type="submit" value="Disable" class="btn btn-link" />
-          </text>
-      }
+        </div>
+      </div>
+      <!-- Change Password -->
+      <div class="col-12 col-lg-6">
+        <div class="card">
+          <!-- Change Password Form -->
+          @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+          {
+            @Html.AntiForgeryToken()
+
+            <div class="card-body bg-light-extra">
+              <h3>Manage Your Password</h3>
+            </div>
+            <div class="card-body">
+              <p class="text-success">@ViewBag.StatusMessage</p>
+              @Html.ValidationSummary("", new { @class = "text-danger" })
+
+              <div class="form-group">
+                @Html.LabelFor(m => m.ChangePasswordVM.OldPassword, new { @class = "col-md-10 control-label" })
+                <div class="col-md-10">
+                  @Html.PasswordFor(m => m.ChangePasswordVM.OldPassword, new { @class = "form-control" })
+                </div>
+              </div>
+
+              <div class="form-group">
+                @Html.LabelFor(m => m.ChangePasswordVM.NewPassword, new { @class = "col-md-10 control-label" })
+                <div class="col-md-10">
+                  @Html.PasswordFor(m => m.ChangePasswordVM.NewPassword, new { @class = "form-control" })
+                  @Html.ValidationMessage("Password", "", new { @class = "text-danger" })
+                </div>
+              </div>
+
+              <div class="form-group">
+                @Html.LabelFor(m => m.ChangePasswordVM.ConfirmPassword, new { @class = "col-md-10 control-label" })
+                <div class="col-md-10">
+                  @Html.PasswordFor(m => m.ChangePasswordVM.ConfirmPassword, new { @class = "form-control" })
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                  <input type="submit" value="Change password" class="btn btn-danger" />
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+      <!-- Manage External Logins -->
+    </div>
+    <div class="card-footer">
+      <div class="row justify-content-center">
+        <div class="col-2">
+          @Html.ActionLink("Close", "Index", "Home", null, new { @class = "btn btn-block btn-info" })
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--<div>-->
+  @*<dl class="dl-horizontal">
+
+    <dt>External Logins:</dt>
+    <dd>
+      @Model.IndexVM.Logins.Count [
+      @Html.ActionLink("Manage", "ManageLogins") ]
+    </dd>*@
+  @*
+    Phone Numbers can used as a second factor of verification in a two-factor authentication system.
+
+     See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+        for details on setting up this ASP.NET application to support two-factor authentication using SMS.
+
+     Uncomment the following block after you have set up two-factor authentication
+  *@
+  @*
+    <dt>Phone Number:</dt>
+    <dd>
+        @(Model.PhoneNumber ?? "None")
+        @if (Model.PhoneNumber != null)
+        {
+            <br />
+            <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
+            using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
+            }
+        }
+        else
+        {
+            <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
+        }
+    </dd>
+  *@
+  @*<dt>Two-Factor Authentication:</dt>
+    <dd>
+      <p>
+        There are no two-factor authentication providers configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+        for details on setting up this ASP.NET application to support two-factor authentication.
+      </p>*@
+  @*@if (Model.TwoFactor)
+    {
+        using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <text>Enabled
+            <input type="submit" value="Disable" class="btn btn-link" />
+            </text>
+        }
+    }
+    else
+    {
+        using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <text>Disabled
+            <input type="submit" value="Enable" class="btn btn-link" />
+            </text>
+        }
+    }*@
+  @*</dd>
+    </dl>*@
+  <!--</div>-->
+
+
+  @section Scripts {
+    <script>
+      $(document).ready(function () {
+        $('.dropify').dropify();
+      });
+    </script>
+    <script src="~/Scripts/jQuery.style.switcher.js"></script>
   }
-  else
-  {
-      using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-      {
-          @Html.AntiForgeryToken()
-          <text>Disabled
-          <input type="submit" value="Enable" class="btn btn-link" />
-          </text>
-      }
-  }*@
-@*</dd>
-  </dl>*@
-<!--</div>-->
-
-
-@section Scripts {
-  <script>
-    $(document).ready(function () {
-      $('.dropify').dropify();
-    });
-  </script>
-  <script src="~/Scripts/jQuery.style.switcher.js"></script>
-}
