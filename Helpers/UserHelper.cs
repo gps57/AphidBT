@@ -40,6 +40,18 @@ namespace AphidBT.Helpers
             return user.AvatarPath;
         }
 
+        public string GetEmail(string userId)
+        {
+            var user = db.Users.Find(userId);
+            return user.Email;
+        }
+
+        public string GetEmail()
+        {
+            var user = db.Users.Find(HttpContext.Current.User.Identity.GetUserId());
+            return user.Email;
+        }
+
         public string LastNameFirst(string userId)
         {
             var user = db.Users.Find(userId);

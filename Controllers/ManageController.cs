@@ -7,6 +7,10 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using AphidBT.Models;
+using AphidBT.ViewModels;
+using System.Web.Configuration;
+using System.IO;
+using AphidBT.Helpers;
 
 namespace AphidBT.Controllers
 {
@@ -65,7 +69,8 @@ namespace AphidBT.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
-            var model = new IndexViewModel
+
+            var indexViewModel = new IndexViewModel()
             {
                 HasProfile = HasProfile(),
                 HasPassword = HasPassword(),
@@ -74,6 +79,24 @@ namespace AphidBT.Controllers
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
+
+            var user = db.Users.Find(userId);
+            var profileVM = new ExtChangeProfileViewModel()
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                AvatarPath = user.AvatarPath
+            };
+
+            var model = new UserSettingsVM()
+            {
+                IndexVM = indexViewModel,
+                ExtChangeProfileVM = profileVM,
+                ChangePasswordVM = new ChangePasswordViewModel(),
+                ManageLoginsVM = new ManageLoginsViewModel()
+            };
+
             return View(model);
         }
 
@@ -226,13 +249,13 @@ namespace AphidBT.Controllers
         // POST: /Manage/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        public async Task<ActionResult> ChangePassword(UserSettingsVM model)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(model.ChangePasswordVM);
             }
-            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.ChangePasswordVM.OldPassword, model.ChangePasswordVM.NewPassword);
             if (result.Succeeded)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -290,7 +313,7 @@ namespace AphidBT.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> ChangeProfile(ChangeProfileViewModel model)
+        public async Task<ActionResult> ChangeProfile(UserSettingsVM model, HttpPostedFileBase avatar)
         {
             if (!ModelState.IsValid)
             {
@@ -304,13 +327,34 @@ namespace AphidBT.Controllers
             var userRecord = db.Users.Find(loggedInUser.Id);
 
             // update the database record with the new data the user entered
-            userRecord.FirstName = model.FirstName;
-            userRecord.LastName = model.LastName;
-            userRecord.Email = model.Email;
-            userRecord.UserName = model.Email;
+            userRecord.FirstName = model.ExtChangeProfileVM.FirstName;
+            userRecord.LastName = model.ExtChangeProfileVM.LastName;
+            userRecord.Email = model.ExtChangeProfileVM.Email;
+            userRecord.UserName = model.ExtChangeProfileVM.Email;
+
+            if (avatar != null)
+            {
+                // TODO: When the avatar is changed, we'll have to delete the old file, or they'll just
+                // pile up on the server.
+                var serverFolder = WebConfigurationManager.AppSettings["DefaultServerFolder"];
+                var oldAvatarFileName = Path.GetFileName(userRecord.AvatarPath);
+
+                if (System.IO.File.Exists(Path.Combine(serverFolder, oldAvatarFileName)))
+                {
+                    System.IO.File.Delete(Path.Combine(serverFolder, oldAvatarFileName));
+                }
+
+                if (FileUploadValidator.IsWebFriendlyImage(avatar))
+                {
+                    var fileName = FileStamp.MakeUnique(avatar.FileName);
+
+                    avatar.SaveAs(Path.Combine(Server.MapPath(serverFolder), fileName));
+                    userRecord.AvatarPath = $"{serverFolder}/{fileName}";
+                }
+            }
 
             db.SaveChanges();
-            return View(model);
+            return RedirectToAction("Index");
 
         }
 
@@ -322,6 +366,7 @@ namespace AphidBT.Controllers
                 message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : "";
+
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null)
             {
@@ -330,11 +375,20 @@ namespace AphidBT.Controllers
             var userLogins = await UserManager.GetLoginsAsync(User.Identity.GetUserId());
             var otherLogins = AuthenticationManager.GetExternalAuthenticationTypes().Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider)).ToList();
             ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
-            return View(new ManageLoginsViewModel
+
+            var model = new ManageLoginsViewModel
             {
                 CurrentLogins = userLogins,
                 OtherLogins = otherLogins
-            });
+            };
+
+            return PartialView(model);
+
+            //return View(new ManageLoginsViewModel
+            //{
+            //    CurrentLogins = userLogins,
+            //    OtherLogins = otherLogins
+            //});
         }
 
         //

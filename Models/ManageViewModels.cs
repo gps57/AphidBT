@@ -77,6 +77,13 @@ namespace AphidBT.Models
         public string Email { get; set; }
     }
 
+    public class ExtChangeProfileViewModel: ChangeProfileViewModel
+    {
+        [DataType(DataType.Text)]
+        [Display(Name = "Avatar")]
+        public string AvatarPath { get; set; }
+    }
+
     public class AddPhoneNumberViewModel
     {
         [Required]

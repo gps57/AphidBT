@@ -21,39 +21,37 @@
 
 
       <div id="socialLoginList">
-        @*<p>*@
-          <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
-              <div class="social">
-                <section id="socialLoginForm">
-                  @foreach (AuthenticationDescription p in loginProviders)
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
+            <div class="social">
+              <section id="socialLoginForm">
+                @foreach (AuthenticationDescription p in loginProviders)
+                {
+                  string caption = p.Caption.ToLower();
+
+                  switch (caption)
                   {
-                    string caption = p.Caption.ToLower();
+                    case "google":
+                      <button type="submit" class="btn btn-googleplus" data-toggle="tooltip" title="Login with Google" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType"><i aria-hidden="true" class="fa fa-google-plus"></i></button>
+                      break;
 
-                    switch (caption)
-                    {
-                      case "google":
-                        <button type="submit" class="btn btn-googleplus" data-toggle="tooltip" title="Login with Google" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType"><i aria-hidden="true" class="fa fa-google-plus"></i></button>
-                        break;
+                    case "microsoft":
+                      <button type="submit" class="btn btn-microsoft bg-info text-light" data-toggle="tooltip" title="Login with Microsoft" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType"><i aria-hidden="true" class="fa fa-windows"></i></button>
+                      break;
 
-                      case "microsoft":
-                        <button type="submit" class="btn btn-microsoft bg-info text-light" data-toggle="tooltip" title="Login with Microsoft" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType"><i aria-hidden="true" class="fa fa-windows"></i></button>
-                        break;
+                    case "linkedin":
+                      <button type="submit" class="btn btn-linkedin" data-toggle="tooltip" title="Login with LinkedIn" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType"><i aria-hidden="true" class="fa fa-linkedin"></i></button>
+                      break;
 
-                      case "linkedin":
-                        <button type="submit" class="btn btn-linkedin" data-toggle="tooltip" title="Login with LinkedIn" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType"><i aria-hidden="true" class="fa fa-linkedin"></i></button>
-                        break;
-
-                      case "github":
-                        <button type="submit" class="btn btn-github bg-inverse text-light" data-toggle="tooltip" title="Login with GitHub" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType"><i aria-hidden="true" class="fa fa-github"></i></button>
-                        break;
-                    }
+                    case "github":
+                      <button type="submit" class="btn btn-github bg-inverse text-light" data-toggle="tooltip" title="Login with GitHub" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType"><i aria-hidden="true" class="fa fa-github"></i></button>
+                      break;
                   }
-                </section>
-                </div>
-              </div>
+                }
+              </section>
             </div>
-        @*</p>*@
+          </div>
+        </div>
       </div>
     }
   }
