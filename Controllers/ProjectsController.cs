@@ -120,6 +120,37 @@ namespace AphidBT.Controllers
             return View(project);
         }
 
+        // GET:
+        public ActionResult EditProject(int id)
+        {
+            Project project = db.Projects.Find(id);
+            if (project == null)
+            {
+                return HttpNotFound();
+            }
+            return View(project);
+        }
+
+        // POST:
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateProject(int Id, string name)
+        {
+            if (ModelState.IsValid)
+            {
+                //db.Entry(project).State = EntityState.Modified;
+                db.Projects.Find(Id).Name = name;
+                db.SaveChanges();
+                ViewBag.projectedit = "You Project Name has been updated.";
+            }
+            else
+            {
+                ViewBag.projectedit = "Something went wrong.  Your project name was not updated.";
+            }
+
+            return RedirectToAction("Index", "Projects");
+        }
+
         // POST: Projects/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.

@@ -1,0 +1,48 @@
+﻿@model AphidBT.Models.Project
+
+@{
+  ViewBag.Title = "EditProject";
+}
+
+<a id="displayModal" data-toggle="modal" data-target="#edit-project"></a>
+<div id="edit-project" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    @*<div class="card">*@
+    <div class="modal-content">
+      @using (Html.BeginForm("UpdateProject", "Projects", new { Id = Model.Id}))
+      {
+        @Html.AntiForgeryToken()
+
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Project</h4> <div class="font-18"></div>
+        @Html.ActionLink("×", "Index", "Projects", null, new { @type = "button", @class = "close" })
+        @*<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>*@
+      </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="control-label">Project Name</label>
+            @Html.Editor("Name", new { htmlAttributes = new { @class = "form-control", value = "@Model.Name" } })
+            <small class="form-control-feedback"> Enter the project name </small>
+          </div>
+        </div>
+        <div class="modal-body">
+        </div>
+
+        <div class="modal-footer">
+          @Html.ActionLink("Close", "Index", "Projects", null, new {@type="button", @class = "btn btn-outline-secondary waves-effect" })
+          @*< a href="@Url.Action("Index","Projects")" type="button" class="btn btn-outline-secondary waves-effect" data-dismiss="modal">Close</a>*@
+          <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+        </div>
+      }
+    </div>
+     @*</div>*@
+   </div>
+ </div>
+
+  @section Scripts {
+    <script>
+      $(document).ready(function () {
+        $('#displayModal').click();
+      })
+    </script>
+  }

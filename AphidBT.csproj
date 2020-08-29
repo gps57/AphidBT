@@ -661,6 +661,7 @@
     <Content Include="Views\Users\Manage.cshtml" />
     <None Include="Properties\PublishProfiles\AphidBT - Web Deploy.pubxml" />
     <Content Include="Views\Account\DemoLogin.cshtml" />
+    <Content Include="Views\Projects\EditProject.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008032156038_migration-03aug2020.resx">

@@ -23,6 +23,32 @@ namespace AphidBT.Helpers
             return userManager.GetRoles(userId);
         }
 
+        public bool IsUserAssignedAnyRole(string userId)
+        {
+            if(userManager.GetRoles(userId).Count != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool IsUserAssignedAnyRole()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+
+            if (userManager.GetRoles(userId).Count != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public bool AddUserToRole(string userId, string roleName)
         {
             var result = userManager.AddToRole(userId, roleName);

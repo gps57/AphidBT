@@ -96,7 +96,6 @@
 </div>
 <div class="m-b-20"><hr /></div>
 <!-- End User Boxes Row -->
-
 <!-- Tickets Accordion Row -->
 <div class="row m-b-20 justify-content-center">
   <div class="col-12">
@@ -110,7 +109,7 @@
             </a>
           </h5>
         </div>
-        <div id="AAcollapseTwo" class="collapse show" role="tabpanel" aria-labelledby="headingTwo">
+        <div id="AAcollapseTwo" class="@*collapse show*@" role="tabpanel" aria-labelledby="headingTwo">
           <div class="card-body">
             <!-- put table here -->
             <table id="myTable" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="5">
@@ -132,13 +131,20 @@
               </thead>
               <tbody>
                 @foreach (var item in ticketHelper.GetMyTickets())
-                {
-                  <tr>
+                {                    
+                  <tr onclick="window.location = '@Url.Action("Dashboard", "Tickets", new { Id = item.Id })';" >
                     <td>
                       @Html.DisplayFor(modelItem => item.Title)
                     </td>
                     <td>
-                      @Html.DisplayFor(modelItem => item.Developer.FullName)
+                      @if (item.Developer == null)
+                      {
+                        <span class="text-danger">None Assigned</span>
+                      }
+                      else
+                      {
+                        @item.Developer.FullName
+                  }
                     </td>
                     <td>
                       @Html.DisplayFor(modelItem => item.Project.Name)
@@ -254,17 +260,33 @@
               @foreach (var item in userHelper.GetUserList())
               {
                 <a href="@Url.Action("Manage", "Users", new { userId = item.Id })">
-                  @if (item.AvatarPath == null)
-                  {
-                    <div class="user-img"><img src="~/Images/Avatars/default_avatar.png" alt="user" class="img-circle mb-2"></div>
-                  }
-                  else
-                  {
-                    <div class="user-img"><img src="@item.AvatarPath" alt="user" class="img-circle"></div>
-                  }
-
-                  <div class="mail-content">
-                    <h5>@item.FullName (@userRolesHelper.ListUserRoles(item.Id).FirstOrDefault())</h5> <span class="mail-desc">@item.Email</span>
+                  <div class="row">
+                    <div class="col-2">
+                      @if (item.AvatarPath == null)
+                      {
+                        <div class="user-img"><img src="~/Images/Avatars/default_avatar.png" alt="user" class="img-circle mb-2"></div>
+                      }
+                      else
+                      {
+                        <div class="user-img"><img src="@item.AvatarPath" alt="user" class="img-circle"></div>
+                      }
+                    </div>
+                    <div class="col-10">
+                      <div class="mail-content">
+                        <h5>
+                          @item.FullName
+                          @if (@userRolesHelper.IsUserAssignedAnyRole(item.Id))
+                          {
+                            <span>(</span>@userRolesHelper.ListUserRoles(item.Id).FirstOrDefault();<span>)</span>
+                          }
+                          else
+                          {
+                            <span class="text-danger">(No Role Assigned)</span>
+                          }
+                        </h5>
+                        <span class="mail-desc">@item.Email</span>
+                      </div>
+                    </div>
                   </div>
                 </a>
               }
