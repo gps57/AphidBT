@@ -6362,7 +6362,7 @@ a.mytooltip {
 
 .sidebar-nav>ul>li>a.active {
     font-weight: 400;
-    background: #242933;
+    /*background: #242933;*/
     color: #26c6da
 }
 
@@ -9477,3 +9477,6 @@ input[type=checkbox]:not(:disabled).tabbed:focus~.lever:after, input[type=checkb
     width: 30px;
 }
 
+.sidebar-nav > ul > li > a.active {
+    background: #242933;
+}
