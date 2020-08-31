@@ -1,14 +1,19 @@
-﻿@model IEnumerable<AphidBT.Models.Project>
+﻿@using AphidBT.Models
+@using AphidBT.Helpers
+
+@model IEnumerable<Project>
 
 @{
-  ViewBag.Title = "Index";
+    ProjectHelper projectHelper = new ProjectHelper();
+    ViewBag.Title = "Index";
 }
 
 <div class="row">
   <div class="col-12">
     <div class="card card-outline-info">
       <div class="card-header">
-        <h4 class="m-b-0 text-white">Current List of Projects</h4>
+        <h3 class="text-white card-title">Current Projects</h3>
+        <h6 class="card-subtitle text-white m-0 op-5">Click on any row to edit project.</h6>
       </div>
       <div class="card-body px-4">
         <table id="projectsTable" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="5">
@@ -17,32 +22,45 @@
               <th>
                 @Html.DisplayNameFor(model => model.Name)
               </th>
-              <th>
+              <th class="text-center">
                 @Html.DisplayNameFor(model => model.Created)
               </th>
-              <th></th>
+              <th class="text-center">
+                Open Tickets
+              </th>
+              <th class="text-center">
+                Managers
+              </th>
+              <th class="text-center">
+                Developers
+              </th>
+              <th class="text-center">
+                Submitters
+              </th>
             </tr>
           </thead>
           <tbody>
             @foreach (var item in Model)
             {
-                @*<tr onclick="window.location = '@Url.Action("EditProject", "Projects", new { Id = item.Id })';">*@
-                <tr>
+                <tr onclick="window.location = '@Url.Action("Dashboard", "Projects", new { Id = item.Id })';">
+                @*<tr>*@
                 <td>
                   @Html.DisplayFor(modelItem => item.Name)
                 </td>
-                <td>
+                <td class="text-center">
                   @Html.DisplayFor(modelItem => item.Created)
                 </td>
-                <td>
-                  @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                  {
-                  <a href="@Url.Action("EditProject", "Projects", new { Id = item.Id })"
-                     class="model_img img-responsive"><i class="ti-pencil-alt"></i>
-                  </a>
-                    @*@Html.ActionLink("Edit", "Edit", new { id = item.Id }) <span> | </span>*@
-                  }
-                  
+                  <td class="text-center">
+                    @projectHelper.CountOpenTickets(item.Id) 
+                  </td>
+                <td class="text-center">
+                  @projectHelper.CountProjectManagers(item.Id)
+                </td>
+                <td class="text-center">
+                  @projectHelper.CountDevelopers(item.Id)
+                </td>
+                <td class="text-center">
+                  @projectHelper.CountSubmitters(item.Id)
                 </td>
               </tr>
             }

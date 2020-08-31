@@ -1,0 +1,385 @@
+﻿@using AphidBT.Helpers
+@using AphidBT.Models
+@model Project
+
+
+@{
+  ViewBag.Title = "Project Dashboard";
+  UserHelper userHelper = new UserHelper();
+  UserRolesHelper userRolesHelper = new UserRolesHelper();
+  ProjectHelper projectHelper = new ProjectHelper();
+  TicketHelper ticketHelper = new TicketHelper();
+}
+
+<div class="row">
+  <div class="col-12">
+    <div class="card card-outline-info">
+      <div class="card-header">
+        <h4 class="m-b-0 text-white">Project Details</h4>
+      </div>
+      <div class="card-body px-4">
+        <div class="card-title">
+          <div class="row">
+            <div class="col-12 col-lg-6 justify-content-start">
+              <!-- Project Name -->
+              <div class="form-group">
+                <fieldset disabled>
+                  @if (projectHelper.CanEditProject(Model.Id))
+                  {
+                    <div class="row">
+                      <div class="col-1 mx-2">
+                        <a class="model_img img-responsive" data-toggle="modal" data-target="#edit-name"><i class="ti-pencil-alt"></i></a>
+                      </div>
+                      <div class="col-10>">
+                        <label for="title-input">Project Name</label>
+                      </div>
+                    </div>
+                  }
+                  else
+                  {
+                    <label for="title-input">Project Name</label>
+                  }
+                  <input type="text" id="title-input" class="form-control" value="@Model.Name">
+                </fieldset>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6 d-flex justify-content-end align-content-end">
+              <h3>Created Date: @Model.Created.ToString("dd MMM yyyy")</h3>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <!-- A row for user roles assigned to project -->
+        <div class="row">
+          <!-- a column Project Managers -->
+          <div class="col-12 col-lg-4">
+            <div class="card rounded border-info">
+              <div class="card-body bg-info rounded-top">
+                <!-- A row for the Project Manager's title bar-->
+                <div class="row">
+                  @if (projectHelper.CanEditProject(Model.Id))
+                  {
+                    <div class="col-1 ml-2">
+                      <a class="model_img img-responsive text-white" data-toggle="modal" data-target="#select-manager"><i class="ti-pencil-alt"></i></a>
+                    </div>
+                  }
+                  <div class="col-10">
+                    <h4 class="text-white card-title">Project Managers</h4>
+                  </div>
+                </div>
+              </div>
+
+              <!-- card body for list of project managers -->
+              <div class="card-body">
+                <!-- set up scrolling -->
+                <div id="pm-scroll">
+                  <div class="comment-widgets m-b-5">
+                    @if (projectHelper.CountProjectManagers(Model.Id) == 0)
+                    {
+                      <div class="row">
+                        <div class="d-flex col-12 justify-content-center">
+                          <h3>There are no project managers assigned to this project.</h3>
+                        </div>
+                      </div>
+                    }
+                    else
+                    {
+                      foreach (var manager in projectHelper.ListUsersOnProjectInRole(Model.Id, "Project Manager"))
+                      {
+                        <div class="d-flex flex-row comment-row">
+                          <div class="px-1"><span class="round"><img src="@manager.AvatarPath" alt="user" width="50"></span></div>
+                          <div class="comment-text w-100">
+                            <h5>@manager.FullName</h5>
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- a column for Developers -->
+          <div class="col-12 col-lg-4">
+            <div class="card rounded">
+              <div class="card-body bg-info rounded-top">
+                <!-- A row for the Developers title bar-->
+                <div class="row">
+                  @if (projectHelper.CanEditProject(Model.Id))
+                  {
+                    <div class="col-1 ml-2">
+                      <a class="model_img img-responsive text-white" data-toggle="modal" data-target="#select-devs"><i class="ti-pencil-alt"></i></a>
+                    </div>
+                  }
+                  <div class="col-10">
+                    <h4 class="text-white card-title">Developers</h4>
+                  </div>
+                </div>
+              </div>
+              <!-- card body for list of developers -->
+              <div class="card-body">
+                <!-- set up scrolling -->
+                <div id="dev-scroll">
+                  <div class="comment-widgets m-b-20">
+                    @if (projectHelper.CountDevelopers(Model.Id) == 0)
+                    {
+                      <div class="row">
+                        <div class="d-flex col-12 justify-content-center">
+                          <h3>There are no developers assigned to this project.</h3>
+                        </div>
+                      </div>
+                    }
+                    else
+                    {
+                      foreach (var manager in projectHelper.ListUsersOnProjectInRole(Model.Id, "Developer"))
+                      {
+                        <div class="d-flex flex-row comment-row">
+                          <div class="px-1"><span class="round"><img src="@manager.AvatarPath" alt="user" width="50"></span></div>
+                          <div class="comment-text w-100">
+                            <h5>@manager.FullName</h5>
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- a column for Submitters -->
+          <div class="col-12 col-lg-4">
+            <div class="card rounded">
+              <div class="card-body bg-info rounded-top">
+                <!-- A row for the Submitters title bar-->
+                <div class="row">
+                  @if (projectHelper.CanEditProject(Model.Id))
+                  {
+                    <div class="col-1 ml-2">
+                      <a class="model_img img-responsive text-white" data-toggle="modal" data-target="#select-subs"><i class="ti-pencil-alt"></i></a>
+                    </div>
+                  }
+                  <div class="col-10">
+                    <h4 class="text-white card-title">Submitters</h4>
+                  </div>
+                </div>
+              </div>
+              <!-- card body for list of submitters -->
+              <div class="card-body">
+                <!-- set up scrolling -->
+                <div id="sub-scroll">
+                  <div class="comment-widgets m-b-20">
+                    @if (projectHelper.CountSubmitters(Model.Id) == 0)
+                    {
+                      <div class="row">
+                        <div class="d-flex col-12 justify-content-center">
+                          <h3>There are no submitters assigned to this project.</h3>
+                        </div>
+                      </div>
+                    }
+                    else
+                    {
+                      foreach (var manager in projectHelper.ListUsersOnProjectInRole(Model.Id, "Submitter"))
+                      {
+                        <div class="d-flex flex-row comment-row">
+                          <div class="px-1"><span class="round"><img src="@manager.AvatarPath" alt="user" width="50"></span></div>
+                          <div class="comment-text w-100">
+                            <h5>@manager.FullName</h5>
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ********************************************************* -->
+<!--                       Modal Dialogs                       -->
+<!-- ********************************************************* -->
+<!-- Edit Name Modal -->
+<div id="edit-name" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      @using (Html.BeginForm("UpdateProjectName", "Projects", new { projectId = Model.Id }))
+      {
+        @Html.AntiForgeryToken()
+
+        <div class="modal-header">
+          <h4 class="modal-title">Edit Project Name</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="control-label">Project Name</label>
+            @Html.Editor("ProjectName", new { htmlAttributes = new { @class = "form-control", @value = "@Model.Name" } })
+            <small class="form-control-feedback"> Enter the project name </small>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+        </div>
+
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Assign Project Manager Modal -->
+<div id="select-manager" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      @using (Html.BeginForm("AssignProjectManagers", "Projects", new { projectId = Model.Id }))
+      {
+        @Html.AntiForgeryToken()
+
+        <div class="modal-header">
+          <h4 class="modal-title">Assign Project Managers</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group mb-5">
+            @{
+              var managerIds = userRolesHelper.UsersInRole("Project Manager").ToList();
+              var selectedManagerIds = projectHelper.ListUserIdsOnProjectInRole(Model.Id, "Project Manager");
+
+              var managersSelector = new MultiSelectList
+                (
+                  managerIds,
+                  "Id",
+                  "Email",
+                  selectedManagerIds
+                );
+
+            }
+            @Html.Label("Email", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.ListBox("ManagerIds", managersSelector, new { @class = "custom-select pull-right form-control", @size = 5 })
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <!-- Thinking about putting a button to unassign without assignment to new developer -->
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Assign Developers Modal -->
+<div id="select-devs" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      @using (Html.BeginForm("AssignProjectDevelopers", "Projects", new { projectId = Model.Id }))
+      {
+        @Html.AntiForgeryToken()
+
+        <div class="modal-header">
+          <h4 class="modal-title">Assign Developers</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group mb-5">
+            @{
+              var developerIds = userRolesHelper.UsersInRole("Developer").ToList();
+              var selectedDeveloperIds = projectHelper.ListUserIdsOnProjectInRole(Model.Id, "Developer");
+
+              var developersSelector = new MultiSelectList
+                (
+                  developerIds,
+                  "Id",
+                  "Email",
+                  selectedDeveloperIds
+                );
+            }
+            @Html.Label("Email", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.ListBox("DeveloperIds", developersSelector, new { @class = "custom-select pull-right form-control", @size = 5 })
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <!-- Thinking about putting a button to unassign without assignment to new developer -->
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Assign Submitters Modal -->
+<div id="select-subs" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      @using (Html.BeginForm("AssignProjectSubmitters", "Projects", new { projectId = Model.Id }))
+      {
+        @Html.AntiForgeryToken()
+
+        <div class="modal-header">
+          <h4 class="modal-title">Assign Submitters</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group mb-5">
+            @{
+              var submitterIds = userRolesHelper.UsersInRole("Submitter").ToList();
+              var selectedSubmitterIds = projectHelper.ListUserIdsOnProjectInRole(Model.Id, "Submitter");
+
+              var submittersSelector = new MultiSelectList
+                (
+                  submitterIds,
+                  "Id",
+                  "Email",
+                  selectedSubmitterIds
+                );
+            }
+            @Html.Label("Email", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.ListBox("SubmitterIds", submittersSelector, new { @class = "custom-select pull-right form-control", @size = 5 })
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <!-- Thinking about putting a button to unassign without assignment to new developer -->
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-danger waves-effect waves-light">Save changes</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+
+@section Scripts {
+  <script>
+
+    $('#pm-scroll').slimScroll({
+      height: '350px'
+    });
+
+    $('#dev-scroll').slimScroll({
+      height: '350px'
+    });
+
+    $('#sub-scroll').slimScroll({
+      height: '350px'
+    });
+
+  </script>
+}

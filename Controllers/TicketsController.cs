@@ -174,7 +174,6 @@ namespace AphidBT.Controllers
         //[Authorize(Roles = "Admin")]
         public async Task<ActionResult> AssignDeveloper(string developerId, int ticketId)
         {
-            // TODO: Add call to notificationHelper.ManageNotification()
             var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
 
             var ticket = db.Tickets.Find(ticketId);

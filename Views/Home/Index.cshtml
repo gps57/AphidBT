@@ -96,150 +96,95 @@
 </div>
 <div class="m-b-20"><hr /></div>
 <!-- End User Boxes Row -->
-<!-- Tickets Accordion Row -->
-<div class="row m-b-20 justify-content-center">
-  <div class="col-12">
-    <div id="AdminAccordion" class="nav-accordion" role="tablist" aria-multiselectable="true">
-      <!-- All Tickets -->
-      <div class="card">
-        <div class="card-header" role="tab" id="Tickets">
-          <h5 class="mb-0">
-            <a class="collapsed" data-toggle="collapse" data-parent="#AdminAccordion" href="#AAcollapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              All Tickets <i class="fa fa-sort-desc"></i>
-            </a>
-          </h5>
-        </div>
-        <div id="AAcollapseTwo" class="@*collapse show*@" role="tabpanel" aria-labelledby="headingTwo">
-          <div class="card-body">
-            <!-- put table here -->
-            <table id="myTable" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="5">
-              <thead>
-                <tr>
-                  <th>
-                    Ticket Title
-                  </th>
-                  <th>
-                    Developer
-                  </th>
-                  <th>
-                    Project
-                  </th>
-                  <th>
-                    Submitter
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var item in ticketHelper.GetMyTickets())
-                {                    
-                  <tr onclick="window.location = '@Url.Action("Dashboard", "Tickets", new { Id = item.Id })';" >
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Title)
-                    </td>
-                    <td>
-                      @if (item.Developer == null)
-                      {
-                        <span class="text-danger">None Assigned</span>
-                      }
-                      else
-                      {
-                        @item.Developer.FullName
-                  }
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Project.Name)
-                    </td>
-                    <td>
-                      @Html.DisplayFor(modelItem => item.Submitter.FullName)
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- End Tickets Accordion -->
-<hr />
 <!-- Comments/Users Row -->
 <div class="row">
   <!-- Comments column -->
   <div class="col-12 col-lg-6">
     <div class="card">
       <div class="card-body bg-info">
-        <h4 class="text-white card-title">Recent Comments</h4>
-        <h6 class="card-subtitle text-white m-0 op-5">Latest Comments on users from Material</h6>
+        <h4 class="text-white card-title">Most Recent Tickets</h4>
+        <h6 class="card-subtitle text-white m-0">
+          <a href="@Url.Action("Index","Tickets")"><span class="text-white"><i class="mdi mdi-format-list-numbers mr-1"></i>Show all Tickets</span></a>
+        </h6>
       </div>
       <div class="card-body">
         <div id="slimscroll2">
-          <div class="comment-widgets m-b-20">
-            <!-- Comment Row -->
+          <div class="comment-widgets m-b-20">            
+            @foreach (var ticket in ticketHelper.GetMyTickets())
+            {
             <div class="d-flex flex-row comment-row">
-              <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
+              <div><a href="@Url.Action("Dashboard", "Tickets", new { Id = ticket.Id})" class="img-responsive"><i class="mdi mdi-arrow-expand-all"></i></a></div>
               <div class="comment-text w-100">
-                <h5>James Anderson</h5>
-                <div class="comment-footer">
-                  <span class="date">April 14, 2016</span>
-                  <span class="label label-info">Pending</span> <span class="action-icons">
-                    <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
-                    <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
-                    <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-                  </span>
+                <div class="row text-center mb-2">
+                  <div class="col-12">
+                    <h4><span class="text-blue">Ticket Title: </span>@ticket.Title</h4>
+                  </div>
+                  <div class="col-12">
+                    <h5><span class="text-blue">Date Submitted: </span>@ticket.Created</h5>
+                  </div>
                 </div>
-                <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry.</p>
+                <div class="row">
+
+                  <!-- Submitter -->
+                  <div class="col-6">
+
+                    <div class="row text-center mb-1">
+                      <div class="col-12">
+                        <h5><span class="text-blue">Submitted by:</span></h5>
+                      </div>
+                    </div>
+
+                    <div class="row justify-content-center">
+                      <div class="col-12 text-center p-2">
+                        <span class="round">
+                          <img src="@ticket.Submitter.AvatarPath" alt="user" width="50">
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="row justify-content-center">
+                      <div class="col-12 text-center">
+                        <h5>@ticket.Submitter.FullName</h5>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Developer -->
+                  <div class="col-6">
+                    <div class="row text-center mb-1">
+                      <div class="col-12">
+                        <h5><span class="text-blue">Assigned to:</span></h5>
+                      </div>
+                    </div>
+                    @if (@ticket.DeveloperId == null)
+                  {
+                      <div class="row justify-content-center">
+                        <div class="col-12 text-center">
+                          <h5 class="text-danger">No developer assigned.</h5>
+                        </div>
+                      </div>
+                    }
+                    else
+                    {
+                      <div class="row justify-content-center">
+                        <div class="col-12 text-center p-2">
+                          <span class="round">
+                            <img src="@ticket.Developer.AvatarPath" alt="user" width="50">
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="row justify-content-center">
+                        <div class="col-12 text-center">
+                          <h5>@ticket.Developer.FullName</h5>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
               </div>
             </div>
-            <!-- Comment Row -->
-            <div class="d-flex flex-row comment-row ">
-              <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
-              <div class="comment-text active w-100">
-                <h5>Michael Jorden</h5>
-                <div class="comment-footer">
-                  <span class="date">April 14, 2016</span>
-                  <span class="label label-success">Approved</span> <span class="action-icons active">
-                    <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
-                    <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle text-success"></i></a>
-                    <a href="javascript:void(0)"><i class="mdi mdi-heart text-danger"></i></a>
-                  </span>
-                </div>
-                <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry..</p>
-              </div>
-            </div>
-            <!-- Comment Row -->
-            <div class="d-flex flex-row comment-row">
-              <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
-              <div class="comment-text w-100">
-                <h5>Johnathan Doeting</h5>
-                <div class="comment-footer">
-                  <span class="date">April 14, 2016</span>
-                  <span class="label label-danger">Rejected</span> <span class="action-icons">
-                    <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
-                    <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
-                    <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-                  </span>
-                </div>
-                <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry.</p>
-              </div>
-            </div>
-            <!-- Comment Row -->
-            <div class="d-flex flex-row comment-row">
-              <div class="p-2"><span class="round"><img src="~/Images/GlenStewart_600x600-96.jpg" alt="user" width="50"></span></div>
-              <div class="comment-text w-100">
-                <h5>James Anderson</h5>
-                <div class="comment-footer">
-                  <span class="date">April 14, 2016</span>
-                  <span class="label label-info">Pending</span> <span class="action-icons">
-                    <a href="javascript:void(0)"><i class="mdi mdi-pencil-circle"></i></a>
-                    <a href="javascript:void(0)"><i class="mdi mdi-checkbox-marked-circle"></i></a>
-                    <a href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-                  </span>
-                </div>
-                <p class="m-b-5 m-t-10">Lorem Ipsum is simply dummy text of the printing and type setting industry. Lorem Ipsum has beenorem Ipsum is simply dummy text of the printing and type setting industry..</p>
-              </div>
-            </div>
+            }
           </div>
         </div>
       </div>
@@ -249,8 +194,8 @@
   <div class="col-12 col-lg-6">
     <div class="card">
       <div class="card-body bg-dark">
-        <h4 class="text-white card-title">All Users</h4>
-        <h6 class="card-subtitle text-white m-0 op-5">Click on any user to manage</h6>
+        <h4 class="text-white card-title">Team Members</h4>
+        <h6 class="card-subtitle text-white m-0">Click on any user to manage user details.</h6>
       </div>
       <div class="card-body">
         <div id="slimscroll1">

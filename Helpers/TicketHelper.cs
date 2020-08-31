@@ -96,6 +96,12 @@ namespace AphidBT.Helpers
             return count;
         }
 
+        public int TicketCount(string ticketStatus, int projectId)
+        {
+            var ticketsWithStatus = db.Tickets.Where(t => t.TicketStatus.Name == ticketStatus);
+            return ticketsWithStatus.Where(t => t.Projectid == projectId).Count();
+        }
+
         public int PendingTicketsCount()
         {
             int rCount = 0;
@@ -192,6 +198,8 @@ namespace AphidBT.Helpers
         {
             return db.TicketTypes.ToList();
         }
+
+        
 
     }
 }

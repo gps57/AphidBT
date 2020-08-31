@@ -97,16 +97,14 @@ namespace AphidBT.Controllers
                 project.Created = DateTime.Now;
                 db.Projects.Add(project);
                 db.SaveChanges();
-                // After creating, go back to home page
-                // Might decide to go somewhere else later
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Dashboard", "Projects", new { Id = project.Id });
             }
 
             return RedirectToAction("Index", "Home");
         }
 
         // GET: Projects/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Dashboard(int? id)
         {
             if (id == null)
             {
@@ -200,6 +198,87 @@ namespace AphidBT.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult AssignProjectManagers(List<string> managerIds, int projectId)
+        {
+            // if managerIds is empty, we still want to remove all the users from this project,
+            // because that could be the user's intent
+            foreach (var userId in projectHelper.ListUserIdsOnProjectInRole(projectId, "Project Manager"))
+            {
+                projectHelper.RemoveUserFromProject(userId, projectId);
+            }
+
+            if (managerIds.Count == 0)
+            {
+                return RedirectToAction("Dashboard", "Projects", new { Id = projectId });
+            }
+
+            foreach(var Id in managerIds)
+            {
+                if (!string.IsNullOrEmpty(Id))
+                {
+                    projectHelper.AddUserToProject(Id, projectId);
+                }
+            }
+
+            return RedirectToAction("Dashboard", "Projects", new { Id = projectId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult AssignProjectDevelopers(List<string> developerIds, int projectId)
+        {
+            foreach (var userId in projectHelper.ListUserIdsOnProjectInRole(projectId, "Developer"))
+            {
+                projectHelper.RemoveUserFromProject(userId, projectId);
+            }
+
+            foreach (var Id in developerIds)
+            {
+                if (!string.IsNullOrEmpty(Id))
+                {
+                    projectHelper.AddUserToProject(Id, projectId);
+                }
+            }
+
+            return RedirectToAction("Dashboard", "Projects", new { Id = projectId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult AssignProjectSubmitters(List<string> submitterIds, int projectId)
+        {
+            foreach (var userId in projectHelper.ListUserIdsOnProjectInRole(projectId, "Submitter"))
+            {
+                projectHelper.RemoveUserFromProject(userId, projectId);
+            }
+
+            foreach (var Id in submitterIds)
+            {
+                if (!string.IsNullOrEmpty(Id))
+                {
+                    projectHelper.AddUserToProject(Id, projectId);
+                }
+            }
+
+            return RedirectToAction("Dashboard", "Projects", new { Id = projectId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public ActionResult UpdateProjectName(string projectName, int projectId)
+        {
+            db.Projects.Find(projectId).Name = projectName;
+            db.SaveChanges();
+
+            return RedirectToAction("Dashboard", "Projects", new { Id = projectId });
         }
     }
 }
