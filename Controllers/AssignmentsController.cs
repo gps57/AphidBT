@@ -69,6 +69,7 @@ namespace AphidBT.Controllers
 
         #region Projects Assignments
         // Jason's versions from live presentation
+        [Authorize]
         public ActionResult ManageProjectUsers()
         {
             // I want two list boxes in my view, therefore I want to load up 2 MultiSelectLists
@@ -82,6 +83,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult ManageProjectUsers(List<string> userIds, List<int> projectIds, bool remove)
         {
             // if no users, or no projects, send them back
