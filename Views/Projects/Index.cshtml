@@ -16,6 +16,7 @@
         <h6 class="card-subtitle text-white m-0 op-5">Click on any row to edit project.</h6>
       </div>
       <div class="card-body px-4">
+        <!-- List of Projects -->
         <table id="projectsTable" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="5">
           <thead>
             <tr>
@@ -42,7 +43,7 @@
           <tbody>
             @foreach (var item in Model)
             {
-                <tr onclick="window.location = '@Url.Action("Dashboard", "Projects", new { Id = item.Id })';">
+              <tr onclick="window.location = '@Url.Action("Dashboard", "Projects", new { Id = item.Id })';">
                 @*<tr>*@
                 <td>
                   @Html.DisplayFor(modelItem => item.Name)
@@ -50,9 +51,9 @@
                 <td class="text-center">
                   @Html.DisplayFor(modelItem => item.Created)
                 </td>
-                  <td class="text-center">
-                    @projectHelper.CountOpenTickets(item.Id) 
-                  </td>
+                <td class="text-center">
+                  @projectHelper.CountOpenTickets(item.Id)
+                </td>
                 <td class="text-center">
                   @projectHelper.CountProjectManagers(item.Id)
                 </td>

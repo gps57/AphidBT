@@ -6088,7 +6088,8 @@ a.mytooltip {
 
 .contact-list td {
     vertical-align: middle;
-    padding: 25px 10px
+    /*padding: 25px 10px*/
+    padding: 8px 8px
 }
 
 .contact-list td img {

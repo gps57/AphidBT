@@ -2,8 +2,8 @@
 @model AphidBT.ViewModels.TicketsListVM
 
 @{
-    ViewBag.Title = "Index";
-    var ticketHelper = new AphidBT.Helpers.TicketHelper();
+  ViewBag.Title = "Index";
+  var ticketHelper = new AphidBT.Helpers.TicketHelper();
 }
 
 <div class="row">
@@ -49,44 +49,46 @@
     </div>
 
   </div>
-  </div>
+</div>
 <div class="row">
   <div class="col-12">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Support Tickets List</h4>
-        <h6 class="sub-title">List of tickets opened by Submitters</h6>
-        <!-- List of Tickets -->
-        <div class="table-responsive">
-          @if (User.IsInRole("Admin"))
-          {
-            <table id="allTable" class="table m-t-30 table-hover no-wrap contact-list">
-              <thead>
-                <tr>
-                  <th>
-                    <small><strong>Issue Title</strong></small>
-                  </th>
-                  <th>
-                    <small><strong>Project</strong></small>
-                  </th>
-                  <th>
-                    <small><strong>Submitter</strong></small>
-                  </th>
-                  <th>
-                    <small><strong>Priority</strong></small>
-                  </th>
-                  <th>
-                    <small><strong>Status</strong></small>
-                  </th>
-                  <th>
-                    <small><strong>Created Date</strong></small>
-                  </th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var item in Model.AllTickets)
-                {
+    <div class="card card-outline-info">
+    <div class="card-header">
+      <h4 class="text-white card-title">Support Tickets List</h4>
+      <h6 class="sub-title text-white m-0 op-5">List of tickets opened by Submitters</h6>
+    </div>
+    <div class="card-body px-4">
+      <!-- List of Tickets -->
+      <div class="table-responsive">
+        @if (User.IsInRole("Admin"))
+        {
+          <table id="allTable" class="table m-t-30 table-hover no-wrap contact-list">
+            <thead>
+              <tr>
+                <th>
+                  <small><strong>Issue Title</strong></small>
+                </th>
+                <th>
+                  <small><strong>Project</strong></small>
+                </th>
+                <th>
+                  <small><strong>Submitter</strong></small>
+                </th>
+                <th>
+                  <small><strong>Priority</strong></small>
+                </th>
+                <th>
+                  <small><strong>Status</strong></small>
+                </th>
+                <th>
+                  <small><strong>Created Date</strong></small>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (var item in Model.AllTickets)
+              {
                 <tr>
                   <td>
                     @Html.DisplayFor(modelItem => item.Title)
@@ -110,40 +112,40 @@
                     @Html.ActionLink("Details", "Dashboard", new { id = item.Id })
                   </td>
                 </tr>
-                }
-              </tbody>
-            </table>
-          }
-          else
-          {
-              <table id="myTable" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="5">
-              <thead>
-                <tr>
-                  <th>
-                    <small><strong>Issue Title</strong></small>
-                  </th>
-                  <th>
-                    <small><strong>Project</strong></small>
-                  </th>
-                  <th>
-                    <small><strong>Submitter</strong></small>
-                  </th>
-                  <th>
-                    <small><strong>Priority</strong></small>                    
-                  </th>
-                  <th>
-                    <small><strong>Status</strong></small>
-                    
-                  </th>
-                  <th>
-                    <small><strong>Created Date</strong></small>
-                  </th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (var item in Model.MyTickets)
-                {
+              }
+            </tbody>
+          </table>
+        }
+        else
+        {
+          <table id="myTable" class="table m-t-30 table-hover no-wrap contact-list" data-page-size="5">
+            <thead>
+              <tr>
+                <th>
+                  <small><strong>Issue Title</strong></small>
+                </th>
+                <th>
+                  <small><strong>Project</strong></small>
+                </th>
+                <th>
+                  <small><strong>Submitter</strong></small>
+                </th>
+                <th>
+                  <small><strong>Priority</strong></small>
+                </th>
+                <th>
+                  <small><strong>Status</strong></small>
+
+                </th>
+                <th>
+                  <small><strong>Created Date</strong></small>
+                </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (var item in Model.MyTickets)
+              {
                 <tr>
                   <td>
                     @Html.DisplayFor(modelItem => item.Title)
@@ -163,17 +165,18 @@
                   <td>
                     @item.Created.ToString("dd MMM yyyy")
                   </td>
-                  <td>@Html.ActionLink("Details", "Dashboard", new { id = item.Id })
-                  </td>
-                </tr>
-                }
-              </tbody>
+                  <td>
+                    @Html.ActionLink("Details", "Dashboard", new { id = item.Id })
+                </td>
+              </tr>
+            }
+            </tbody>
 
-            </table>
-          }
-        </div>
+          </table>
+        }
       </div>
     </div>
+      </div>
   </div>
 </div>
 

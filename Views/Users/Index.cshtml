@@ -12,12 +12,15 @@
     <h4 class="m-b-0 text-white">List of All Users </h4>
   </div>
   <div class="card-body px-4">
-  <table id="usersTable" class="table">
+  <table id="usersTable" class="table m-t-30 table-hover no-wrap contact-list">
     <thead>
       <tr>
         <th></th>
         <th>
           @Html.DisplayNameFor(model => model.FullName)
+        </th>
+        <th>
+          Role
         </th>
         <th>
           @Html.DisplayNameFor(model => model.Email)
@@ -30,10 +33,20 @@
       {
         <tr>
           <td class="align-middle">
-            <img src="@user.AvatarPath" alt="user" class="img-circle img-fluid mb-2" style="width:40px;">
+            <img src="@user.AvatarPath" alt="user" class="img-circle img-fluid">
           </td>
           <td class="align-middle">
             @Html.DisplayFor(modelItem => user.FullName)
+          </td>
+          <td class="align-middle">
+            @if(roleHelper.ListUserRoles(user.Id).Count == 0)
+            {
+              <div class="text-danger"> No Role Assigned</div>
+            }
+            else
+            {
+              @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
+            }
           </td>
           <td class="align-middle">
             @Html.DisplayFor(modelItem => user.Email)
