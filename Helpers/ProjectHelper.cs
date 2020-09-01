@@ -28,6 +28,18 @@ namespace AphidBT.Helpers
                 return false;
             }
         }
+
+        public bool CanCreateProject()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+
+            if (roleHelper.IsUserInRole(userId, "Admin"))
+            {
+                return true;
+            }
+
+            return false;
+        }
         public int UserProjectCount()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();

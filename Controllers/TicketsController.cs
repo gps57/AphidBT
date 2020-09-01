@@ -38,6 +38,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: Tickets/Dashboard/5
+        [Authorize]
         public ActionResult Dashboard(int? id)
         {
             if (id == null)
@@ -54,7 +55,7 @@ namespace AphidBT.Controllers
 
         // GET: Tickets/Create
         // uncomment this when done with testing
-        //[Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Submitter")]
         public ActionResult Create()
         {
             var userId = User.Identity.GetUserId();
@@ -87,7 +88,7 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Submitter")]
         public ActionResult Create([Bind(Include = "Id,Projectid,TicketPriorityId,TicketTypeId,Title,Description")] Ticket ticket)
         {
             var userId = User.Identity.GetUserId();
@@ -118,6 +119,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: Tickets/Edit/5
+        [Authorize(Roles = "Admin,Developer,Submitter")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -143,6 +145,7 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Developer,Submitter")]
         public ActionResult Edit([Bind(Include = "Id,Projectid,TicketPriorityId,TicketStatusId,TicketTypeId,SubmitterId,DeveloperId,Title,Description,Created,Updated,IsResolved,IsArchived")] Ticket ticket)
         {
             if (ModelState.IsValid)
@@ -171,7 +174,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Project Manager")]
         public async Task<ActionResult> AssignDeveloper(string developerId, int ticketId)
         {
             var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
@@ -199,7 +202,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Developer,Submitter")]
         public ActionResult UpdateTicketDescription(string ticketDescription, int ticketId)
         {
             db.Tickets.Find(ticketId).Description = ticketDescription;
@@ -209,7 +212,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Developer,Submitter")]
         public ActionResult UpdateTicketTitle(string ticketTitle, int ticketId)
         {
             var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
@@ -223,7 +226,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Developer,Submitter")]
         public ActionResult UpdateTicketPriority(int ticketPriorityId, int ticketId)
         {
             var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
@@ -237,7 +240,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Developer,Submitter")]
         public ActionResult UpdateTicketStatus(int ticketStatusId, int ticketId)
         {
             var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
@@ -250,7 +253,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Developer,Submitter")]
         public ActionResult UpdateTicketType(int ticketTypeId, int ticketId)
         {
             var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticketId);
@@ -263,7 +266,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize]
         public ActionResult SetNotifyIsRead(int Id, bool isRead)
         {
             db.TicketNotifications.Find(Id).IsRead = isRead;

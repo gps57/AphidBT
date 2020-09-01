@@ -28,10 +28,11 @@ namespace AphidBT.Controllers
             var loggedInUserId = User.Identity.GetUserId();
 
             // if this user is the admin, return all projects
-            if (roleHelper.IsUserInRole(loggedInUserId, "Admin") || roleHelper.IsUserInRole(loggedInUserId, "Project Manager"))
+            if (roleHelper.IsUserInRole(loggedInUserId, "Admin"))
             {
                 return View(db.Projects.ToList());
             }
+            // else only return those project to which they are assigned
             else
             {
                 var resultList = new List<Project>();
@@ -42,24 +43,13 @@ namespace AphidBT.Controllers
                     {
                         resultList.Add(project);
                     }
-
-                    //foreach (var user in project.Users.ToList())
-                    //{
-                    //    if (user.Id == loggedInUserId)
-                    //    {
-
-                    //    }
-                    //}
                 }
                 return View(resultList);
             }
-
-            // this is the original return statement
-            // if things go wrong, revert back to this.
-            //return View(db.Projects.ToList());
         }
 
         // GET: Projects/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -79,7 +69,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: Projects/Create
-        [Authorize(Roles = "Admin,  Project Manager")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -90,6 +80,7 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create([Bind(Include = "Name")] Project project)
         {
             if (ModelState.IsValid)
@@ -97,6 +88,8 @@ namespace AphidBT.Controllers
                 project.Created = DateTime.Now;
                 db.Projects.Add(project);
                 db.SaveChanges();
+                // need to add the project manager to the project here
+                projectHelper.AddUserToProject(User.Identity.GetUserId(), project.Id);
                 return RedirectToAction("Dashboard", "Projects", new { Id = project.Id });
             }
 
@@ -104,6 +97,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult Dashboard(int? id)
         {
             if (id == null)
@@ -119,6 +113,7 @@ namespace AphidBT.Controllers
         }
 
         // GET:
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult EditProject(int id)
         {
             Project project = db.Projects.Find(id);
@@ -132,6 +127,7 @@ namespace AphidBT.Controllers
         // POST:
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Project Manager")]
         public ActionResult UpdateProject(int Id, string name)
         {
             if (ModelState.IsValid)
@@ -154,6 +150,7 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Project Manager")]
         public ActionResult Edit([Bind(Include = "Id,Name,Created,IsArchived")] Project project)
         {
             if (ModelState.IsValid)
@@ -166,6 +163,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: Projects/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -183,6 +181,7 @@ namespace AphidBT.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Project project = db.Projects.Find(id);
@@ -202,7 +201,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult AssignProjectManagers(List<string> managerIds, int projectId)
         {
             // if managerIds is empty, we still want to remove all the users from this project,
@@ -230,7 +229,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Project Manager")]
         public ActionResult AssignProjectDevelopers(List<string> developerIds, int projectId)
         {
             foreach (var userId in projectHelper.ListUserIdsOnProjectInRole(projectId, "Developer"))
@@ -251,7 +250,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Project Manager")]
         public ActionResult AssignProjectSubmitters(List<string> submitterIds, int projectId)
         {
             foreach (var userId in projectHelper.ListUserIdsOnProjectInRole(projectId, "Submitter"))
@@ -272,7 +271,7 @@ namespace AphidBT.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Project Manager")]
         public ActionResult UpdateProjectName(string projectName, int projectId)
         {
             db.Projects.Find(projectId).Name = projectName;

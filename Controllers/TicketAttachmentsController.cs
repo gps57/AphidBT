@@ -19,12 +19,14 @@ namespace AphidBT.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: TicketAttachments
+        [Authorize]
         public ActionResult Index()
         {
             var ticketAttachments = db.TicketAttachments.Include(t => t.Ticket).Include(t => t.User);
             return View(ticketAttachments.ToList());
         }
 
+        [Authorize]
         // GET: TicketAttachments/Details/5
         public ActionResult Details(int? id)
         {
@@ -41,6 +43,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: TicketAttachments/Create
+        [Authorize]
         public ActionResult Create()
         {
             ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId");
@@ -53,6 +56,7 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult Create([Bind(Include = "TicketId,FileName")] TicketAttachment ticketAttachment, string attachmentDescription, HttpPostedFileBase file)
         {
             // check that there is not an incoming file
@@ -93,6 +97,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: TicketAttachments/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -114,6 +119,7 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult Edit([Bind(Include = "Id,TicketId,UserId,FilePath,Description,Created")] TicketAttachment ticketAttachment)
         {
             if (ModelState.IsValid)
@@ -128,6 +134,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: TicketAttachments/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -145,6 +152,7 @@ namespace AphidBT.Controllers
         // POST: TicketAttachments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult DeleteConfirmed(int id)
         {
             TicketAttachment ticketAttachment = db.TicketAttachments.Find(id);

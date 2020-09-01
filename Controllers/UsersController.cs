@@ -77,12 +77,12 @@ namespace AphidBT.Controllers
             return View(manageUserVM);
         }
 
-        // POST: User/Details
+        // POST: User/Manage
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Submitter")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Manage(ManageUserVM model, string roleName, List<int> projectIds, HttpPostedFileBase avatar)
         {
             var user = db.Users.Find(model.UserId);

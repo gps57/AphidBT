@@ -96,9 +96,9 @@
 </div>
 <div class="m-b-20"><hr /></div>
 <!-- End User Boxes Row -->
-<!-- Comments/Users Row -->
+<!-- Tickets/Users Row -->
 <div class="row">
-  <!-- Comments column -->
+  <!-- Tickets column -->
   <div class="col-12 col-lg-6">
     <div class="card">
       <div class="card-body bg-info">
@@ -109,81 +109,81 @@
       </div>
       <div class="card-body">
         <div id="slimscroll2">
-          <div class="comment-widgets m-b-20">            
+          <div class="comment-widgets m-b-20">
             @foreach (var ticket in ticketHelper.GetMyTickets())
             {
-            <div class="d-flex flex-row comment-row">
-              <div><a href="@Url.Action("Dashboard", "Tickets", new { Id = ticket.Id})" class="img-responsive"><i class="mdi mdi-arrow-expand-all"></i></a></div>
-              <div class="comment-text w-100">
-                <div class="row text-center mb-2">
-                  <div class="col-12">
-                    <h4><span class="text-blue">Ticket Title: </span>@ticket.Title</h4>
-                  </div>
-                  <div class="col-12">
-                    <h5><span class="text-blue">Date Submitted: </span>@ticket.Created</h5>
-                  </div>
-                </div>
-                <div class="row">
-
-                  <!-- Submitter -->
-                  <div class="col-6">
-
-                    <div class="row text-center mb-1">
-                      <div class="col-12">
-                        <h5><span class="text-blue">Submitted by:</span></h5>
-                      </div>
+              <div class="d-flex flex-row comment-row">
+                <div><a href="@Url.Action("Dashboard", "Tickets", new { Id = ticket.Id})" class="img-responsive"><i class="mdi mdi-arrow-expand-all"></i></a></div>
+                <div class="comment-text w-100">
+                  <div class="row text-center mb-2">
+                    <div class="col-12">
+                      <h4><span class="text-blue">Ticket Title: </span>@ticket.Title</h4>
                     </div>
-
-                    <div class="row justify-content-center">
-                      <div class="col-12 text-center p-2">
-                        <span class="round">
-                          <img src="@ticket.Submitter.AvatarPath" alt="user" width="50">
-                        </span>
-                      </div>
-                    </div>
-
-                    <div class="row justify-content-center">
-                      <div class="col-12 text-center">
-                        <h5>@ticket.Submitter.FullName</h5>
-                      </div>
+                    <div class="col-12">
+                      <h5><span class="text-blue">Date Submitted: </span>@ticket.Created</h5>
                     </div>
                   </div>
+                  <div class="row">
 
-                  <!-- Developer -->
-                  <div class="col-6">
-                    <div class="row text-center mb-1">
-                      <div class="col-12">
-                        <h5><span class="text-blue">Assigned to:</span></h5>
-                      </div>
-                    </div>
-                    @if (@ticket.DeveloperId == null)
-                  {
-                      <div class="row justify-content-center">
-                        <div class="col-12 text-center">
-                          <h5 class="text-danger">No developer assigned.</h5>
+                    <!-- Submitter -->
+                    <div class="col-6">
+
+                      <div class="row text-center mb-1">
+                        <div class="col-12">
+                          <h5><span class="text-blue">Submitted by:</span></h5>
                         </div>
                       </div>
-                    }
-                    else
-                    {
+
                       <div class="row justify-content-center">
                         <div class="col-12 text-center p-2">
                           <span class="round">
-                            <img src="@ticket.Developer.AvatarPath" alt="user" width="50">
+                            <img src="@ticket.Submitter.AvatarPath" alt="user" width="50">
                           </span>
                         </div>
                       </div>
 
                       <div class="row justify-content-center">
                         <div class="col-12 text-center">
-                          <h5>@ticket.Developer.FullName</h5>
+                          <h5>@ticket.Submitter.FullName</h5>
                         </div>
                       </div>
-                    }
+                    </div>
+
+                    <!-- Developer -->
+                    <div class="col-6">
+                      <div class="row text-center mb-1">
+                        <div class="col-12">
+                          <h5><span class="text-blue">Assigned to:</span></h5>
+                        </div>
+                      </div>
+                      @if (@ticket.DeveloperId == null)
+                      {
+                        <div class="row justify-content-center">
+                          <div class="col-12 text-center">
+                            <h5 class="text-danger">No developer assigned.</h5>
+                          </div>
+                        </div>
+                      }
+                      else
+                      {
+                        <div class="row justify-content-center">
+                          <div class="col-12 text-center p-2">
+                            <span class="round">
+                              <img src="@ticket.Developer.AvatarPath" alt="user" width="50">
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="row justify-content-center">
+                          <div class="col-12 text-center">
+                            <h5>@ticket.Developer.FullName</h5>
+                          </div>
+                        </div>
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             }
           </div>
         </div>
@@ -195,7 +195,14 @@
     <div class="card">
       <div class="card-body bg-dark">
         <h4 class="text-white card-title">Team Members</h4>
-        <h6 class="card-subtitle text-white m-0">Click on any user to manage user details.</h6>
+        @if (userHelper.CanEditUserInfo())
+        {
+          <h6 class="card-subtitle text-white m-0">Click on any user to manage user details.</h6>
+        }
+        else
+        {
+          <h6 class="card-subtitle text-white m-0">Scroll to see all users on your team.</h6>
+        }
       </div>
       <div class="card-body">
         <div id="slimscroll1">
@@ -204,16 +211,50 @@
             <div class="message-widget contact-widget">
               @foreach (var item in userHelper.GetUserList())
               {
-                <a href="@Url.Action("Manage", "Users", new { userId = item.Id })">
-                  <div class="row">
+                if (userHelper.CanEditUserInfo())
+                {
+                  <a href="@Url.Action("Manage", "Users", new { userId = item.Id })">
+                    <div class="row">
+                      <div class="col-2">
+                        @if (item.AvatarPath == null)
+                        {
+                          <div class="user-img"><img src="~/Images/Avatars/default_avatar.png" alt="user" class="img-circle img-responsive mb-2"></div>
+                        }
+                        else
+                        {
+                          <div class="user-img"><img src="@item.AvatarPath" alt="user" class="img-circle img-responsive"></div>
+                        }
+                      </div>
+                      <div class="col-10">
+                        <div class="mail-content">
+                          <h5>
+                            @item.FullName
+                            @if (@userRolesHelper.IsUserAssignedAnyRole(item.Id))
+                            {
+                              <span>(</span>@userRolesHelper.ListUserRoles(item.Id).FirstOrDefault();<span>)</span>
+                            }
+                            else
+                            {
+                              <span class="text-danger">(No Role Assigned)</span>
+                            }
+                          </h5>
+                          <span class="mail-desc">@item.Email</span>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                }
+                else
+                {
+                  <div class="row mb-3">
                     <div class="col-2">
                       @if (item.AvatarPath == null)
                       {
-                        <div class="user-img"><img src="~/Images/Avatars/default_avatar.png" alt="user" class="img-circle mb-2"></div>
+                        <div class="user-img"><img src="~/Images/Avatars/default_avatar.png" alt="user" class="img-circle img-responsive mb-2"></div>
                       }
                       else
                       {
-                        <div class="user-img"><img src="@item.AvatarPath" alt="user" class="img-circle"></div>
+                        <div class="user-img"><img src="@item.AvatarPath" alt="user" class="img-circle img-responsive"></div>
                       }
                     </div>
                     <div class="col-10">
@@ -233,7 +274,8 @@
                       </div>
                     </div>
                   </div>
-                </a>
+                  <hr />
+                }
               }
             </div>
           </div>

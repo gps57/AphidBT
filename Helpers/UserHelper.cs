@@ -67,5 +67,32 @@ namespace AphidBT.Helpers
         {
             return roleHelper.UsersInRole(role).ToList();
         }
+
+        public bool CanEditUserInfo()
+        {
+            var loggedInUser = db.Users.Find(HttpContext.Current.User.Identity.GetUserId());
+
+            if (roleHelper.IsUserInRole(loggedInUser.Id, "Admin"))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool CanEditUserInfo(string userId)
+        {
+            var loggedInUser = db.Users.Find(HttpContext.Current.User.Identity.GetUserId());
+
+            if (roleHelper.IsUserInRole(userId, "Admin"))
+            {
+                return true;
+            }
+            else if(loggedInUser.Id == userId)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

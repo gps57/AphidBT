@@ -16,6 +16,7 @@ namespace AphidBT.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: TicketComments
+        [Authorize]
         public ActionResult Index()
         {
             var ticketComments = db.TicketComments.Include(t => t.Ticket).Include(t => t.User);
@@ -23,6 +24,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: TicketComments/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -38,6 +40,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: TicketComments/Create
+        [Authorize]
         public ActionResult Create()
         {
             ViewBag.TicketId = new SelectList(db.Tickets, "Id", "SubmitterId");
@@ -50,6 +53,7 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult Create([Bind(Include = "Id,TicketId,Comment")] TicketComment ticketComment)
         {
             if (ModelState.IsValid)
@@ -68,6 +72,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: TicketComments/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -89,6 +94,7 @@ namespace AphidBT.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "Id,TicketId,UserId,Comment,Created")] TicketComment ticketComment)
         {
             if (ModelState.IsValid)
@@ -103,6 +109,7 @@ namespace AphidBT.Controllers
         }
 
         // GET: TicketComments/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -120,6 +127,7 @@ namespace AphidBT.Controllers
         // POST: TicketComments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             TicketComment ticketComment = db.TicketComments.Find(id);
