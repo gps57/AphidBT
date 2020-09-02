@@ -26,6 +26,14 @@ namespace AphidBT.Controllers
             return View(db.Users.ToList());
         }
 
+        // This dashboard will look like...
+        //      file:///C:/SWDev/template%20library/Admin%20Templates/AdminPress/dark/app-contact.html
+        // from the template.
+        public ActionResult Dashboard()
+        {
+            return View();
+        }
+
         public ActionResult ManageUserRole(string id)
         {
             // Does this user already occupy a Roll??  If so, I need to display that role in the dropdown

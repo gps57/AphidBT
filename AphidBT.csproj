@@ -660,6 +660,7 @@
     <Content Include="Views\Account\DemoLogin.cshtml" />
     <Content Include="Views\Projects\EditProject.cshtml" />
     <Content Include="Views\Projects\Dashboard.cshtml" />
+    <Content Include="Views\Users\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008032156038_migration-03aug2020.resx">
