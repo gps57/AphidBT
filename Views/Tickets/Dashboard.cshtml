@@ -38,7 +38,7 @@
             <div class="col-12 col-lg-6 align-self-center">
               <div class="row justify-content-center">
                 <div class="col-4"><h3>Assigned to:</h3></div>
-                @if (ticketHelper.CanEditTicket(Model.Id))
+                @if (ticketHelper.CanEditTicketDeveloper(Model.Id))
                 {
                   if (Model.DeveloperId != null)
                   {
@@ -79,7 +79,7 @@
                 else
                 {
                   <div class="col-6 align-self-center">
-                    @if (ticketHelper.CanEditTicket(@Model.Id))
+                    @if (ticketHelper.CanEditTicketDeveloper(@Model.Id))
                     {
                       <button class="btn btn-sm btn-rounded btn-info model_img img-responsive" data-toggle="modal" data-target="#assigndeveloper-modal">Assign Developer</button>
                     }
@@ -170,7 +170,7 @@
               <!-- Ticket Status -->
               <div class="form-group">
                 <fieldset disabled>
-                  @if (ticketHelper.CanEditTicket(Model.Id))
+                  @if (ticketHelper.CanEditTicketStatus(Model.Id))
                   {
                     <div class="row">
                       <div class="col-1 ml-2">
@@ -183,7 +183,7 @@
                   }
                   else
                   {
-                    <label for="status">Ticket Statua</label>
+                    <label for="status">Ticket Status</label>
                   }
                   <input type="text" id="status" class="form-control" placeholder=@Model.TicketStatus.Name>
                 </fieldset>

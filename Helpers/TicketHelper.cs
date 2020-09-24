@@ -29,12 +29,13 @@ namespace AphidBT.Helpers
                     return true;
 
                 case "Project Manager":
-                    // project manager can make a comment if the ticket is in a project to which they are assigned.
+                    // project manager can edit the ticket if it is in a project to which they are assigned.
                     return user.Projects.SelectMany(p => p.Tickets).Any(t => t.Id == ticketId);
 
                 case "Developer":
                 case "Submitter":
-                    // developer can make a comment if the ticket is in a project to which they are assigned.
+                    // developers can edit the ticket if it is in a project to which they are assigned.
+                    // submitters can edit part of the ticket.
                     var ticket = db.Tickets.Find(ticketId);
                     if (ticket.DeveloperId == userId || ticket.SubmitterId == userId)
                     {
@@ -49,6 +50,70 @@ namespace AphidBT.Helpers
                 default:
                     return false;
             }
+        }
+
+        public bool CanEditTicketStatus(int ticketId)
+        {
+            // the only role that can not edit ticket status is the submitter.
+            // the idea is that if a ticket's status is "Resolved", the submitter should not be able
+            // to just reopen it.
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            var myRole = roleHelper.ListUserRoles(userId).FirstOrDefault();
+            var user = db.Users.Find(userId);
+
+            switch (myRole)
+            {
+                case "Admin":
+                    return true;
+
+                case "Project Manager":
+                    // project manager can edit any part of the ticket if it is in a project to which
+                    // they are assigned.
+                    return user.Projects.SelectMany(p => p.Tickets).Any(t => t.Id == ticketId);
+
+                case "Developer":
+                    // developers can edit the ticket status if it is in a project to which they are assigned.
+                    var ticket = db.Tickets.Find(ticketId);
+                    if (ticket.DeveloperId == userId)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                // a submitter can never edit a ticket's status.
+                case "Submitter":
+                default:
+                    return false;
+            }
+
+        }
+
+        public bool CanEditTicketDeveloper(int ticketId)
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            var myRole = roleHelper.ListUserRoles(userId).FirstOrDefault();
+            var user = db.Users.Find(userId);
+
+            switch (myRole)
+            {
+                case "Admin":
+                    return true;
+
+                case "Project Manager":
+                    // project manager can edit any part of the ticket if it is in a project to which
+                    // they are assigned.
+                    return user.Projects.SelectMany(p => p.Tickets).Any(t => t.Id == ticketId);
+
+                // the developer or submitter can never edit who is assigned as developer.
+                case "Developer":
+                case "Submitter":
+                default:
+                    return false;
+            }
+
         }
 
         public bool CanMakeComment(int ticketId)
